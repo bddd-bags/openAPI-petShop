@@ -1,0 +1,3056 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "PETSHOP",
+    "description": "openAPI for final project",
+    "contact": {
+      "name": "Kelompok 3",
+      "url": "-"
+    },
+    "license": {
+      "name": "APACHE 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "servers": [
+    {
+      "url": "{{baseUrl}}/api",
+      "description": "Mock Server"
+    }
+  ],
+  "security": [
+    {
+      "BearerToken": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Users Activity",
+      "description": "Operation to __User Activity__"
+    },
+    {
+      "name": "Authentication",
+      "description": "Operation to __register__ and __login__"
+    },
+    {
+      "name": "Member | Profile",
+      "description": "Operation in profile __member__"
+    },
+    {
+      "name": "Member | Address",
+      "description": "Operation in profile __member__"
+    },
+    {
+      "name": "Member | Cart",
+      "description": "Operation into  __cart__"
+    },
+    {
+      "name": "Member | Orders",
+      "description": "Operations to make __transactions__"
+    },
+    {
+      "name": "Admin | Profile",
+      "description": "Operation in profile __admin__"
+    },
+    {
+      "name": "Admin | Address",
+      "description": "Operation in profile __admin__"
+    },
+    {
+      "name": "Admin | Product",
+      "description": "Operation about  __product__"
+    },
+    {
+      "name": "Admin | Adopt",
+      "description": "Operations about __adopt__"
+    }
+  ],
+  "paths": {
+    "/v1/register": {
+      "post": {
+        "summary": "Endpoint for register user",
+        "description": "Used by users to register in order to access endpoints that require access rights",
+        "tags": ["Authentication"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users"
+              },
+              "examples": {
+                "USER": {
+                  "description": "User login",
+                  "value": {
+                    "email": "user1@gmail.com",
+                    "password": "abrakadabra",
+                    "phone": "081234567890"
+                  }
+                },
+                "ADMIN": {
+                  "description": "Admin login",
+                  "value": {
+                    "email": "admin@gmail.com",
+                    "password": "akuganteng",
+                    "phone": "081234567890"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success Register",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users"
+                },
+                "examples": {
+                  "USER": {
+                    "description": "Success create user login",
+                    "value": {
+                      "id": 1,
+                      "email": "user1@gmail.com",
+                      "phone": "081234567890",
+                      "role_id": 2
+                    }
+                  },
+                  "ADMIN": {
+                    "description": "Success create user login",
+                    "value": {
+                      "id": 2,
+                      "email": "admin@gmail.com",
+                      "phone": "081234567890",
+                      "role_id": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/login": {
+      "post": {
+        "summary": "Endpoint for login",
+        "description": "used by the user to login in order to access endpoints that require access rights",
+        "tags": ["Authentication"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users"
+              },
+              "examples": {
+                "MEMBER": {
+                  "description": "Member login",
+                  "value": {
+                    "email": "user1@gmail.com",
+                    "password": "abrakadabra"
+                  }
+                },
+                "ADMIN": {
+                  "description": "Admin login",
+                  "value": {
+                    "email": "admin@gmail.com",
+                    "password": "akuganteng"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success Login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users"
+                },
+                "examples": {
+                  "MEMBER": {
+                    "description": "Success user login",
+                    "value": {
+                      "id": 1,
+                      "username": "user1",
+                      "access_token": "INI_ACCESS_TOKEN",
+                      "refresh_token": "INI_REFRESH_TOKEN",
+                      "roleId": 2
+                    }
+                  },
+                  "ADMIN": {
+                    "description": "Success user login",
+                    "value": {
+                      "id": 2,
+                      "username": "admin",
+                      "access_token": "INI_ACCESS_TOKEN",
+                      "refresh_token": "INI_REFRESH_TOKEN",
+                      "roleId": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}": {
+      "get": {
+        "summary": "Endpoint for get biodata",
+        "description": "Used by the user to view the user's bio",
+        "tags": ["Member | Profile"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "email": "user1@gmail.com",
+                    "phone": "081234567899"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Endpoint for update biodata",
+        "description": "Used by the user to update the user's bio",
+        "tags": ["Member | Profile"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users"
+              },
+              "example": {
+                "password": "abrakadabrahompimpa",
+                "phone": "081234567899"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "password": "abrakadabrahompimpa",
+                    "phone": "081234567899"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/cart": {
+      "get": {
+        "summary": "Endpoint for view carts",
+        "description": "Used by the user to view items that have been added to the cart",
+        "tags": ["Member | Cart"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/shopping_carts"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "user_id": 1,
+                      "product_id": 1
+                    },
+                    {
+                      "user_id": 1,
+                      "product_id": 2
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Endpoint to add product into the cart",
+        "description": "Used by user to add items to cart",
+        "tags": ["Member | Cart"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "requestBody": {
+          "description": "Add product into cart",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/shopping_carts"
+              },
+              "example": {
+                "user_id": 1,
+                "product_id": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Add product into cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/shopping_carts"
+                },
+                "example": {
+                  "id": 1,
+                  "user_id": 1,
+                  "product_id": 1
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1//user/{userId}/cart/{cartId}": {
+      "delete": {
+        "summary": "Endpoint for delete product in carts",
+        "description": "Used by the user to delete items in the cart",
+        "tags": ["Member | Cart"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "$ref": "#/components/parameters/shopping_carts"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/address": {
+      "get": {
+        "summary": "Endpoint to view addresses",
+        "description": "Used by the user to view all addresses that have been added",
+        "tags": ["Member | Address"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addresses"
+                },
+                "example": {
+                  "status": "OK",
+                  "date": [
+                    {
+                      "id": 1,
+                      "user_id": 2,
+                      "name": "jkw",
+                      "phone": "081230901923",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "kotabumi rt01/02"
+                    },
+                    {
+                      "id": 2,
+                      "user_id": 2,
+                      "name": "jkw",
+                      "phone": "081230902222",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "kotabumi"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Endpoint for add address",
+        "description": "Used by user to add address",
+        "tags": ["Member | Address"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addresses"
+              },
+              "examples": {
+                "ADDRESS 1": {
+                  "description": "Success add address 1",
+                  "value": {
+                    "name": "saitama",
+                    "phone": "081230901923",
+                    "city_district": "Solo",
+                    "postal_code": "57722",
+                    "address": "kotabumi"
+                  }
+                },
+                "ADDRESS 2": {
+                  "description": "Success add address 2",
+                  "value": {
+                    "name": "jkw",
+                    "phone": "081230908721",
+                    "city_district": "Solo",
+                    "postal_code": "57722",
+                    "address": "slo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success add address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addresses"
+                },
+                "examples": {
+                  "ADDRESS 1": {
+                    "description": "Success add address 1",
+                    "value": {
+                      "id": 1,
+                      "user_id": 1,
+                      "name": "saitama",
+                      "phone": "081230901923",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "kotabumi"
+                    }
+                  },
+                  "ADDRESS 2": {
+                    "description": "Success add address 2",
+                    "value": {
+                      "id": 2,
+                      "user_id": 1,
+                      "name": "jkw",
+                      "phone": "081230908721",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "slo"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/address/{addressId}": {
+      "put": {
+        "summary": "Endpoint for updated address",
+        "description": "Used by users to view details of addresses that have been added",
+        "tags": ["Member | Address"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "$ref": "#/components/parameters/addressId"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addresses"
+              },
+              "examples": {
+                "ADDRESS 1": {
+                  "description": "Success updated address 1",
+                  "value": {
+                    "name": "saitamahaha",
+                    "phone": "081230901999",
+                    "city_district": "Solo",
+                    "postal_code": "57722",
+                    "address": "kotabumi"
+                  }
+                },
+                "ADDRESS 2": {
+                  "description": "Success updated address 2",
+                  "value": {
+                    "name": "jkw",
+                    "phone": "081230908722",
+                    "city_district": "Solo",
+                    "postal_code": "57722",
+                    "address": "slo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success updated address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addresses"
+                },
+                "examples": {
+                  "ADDRESS 1": {
+                    "description": "Success updated address 1",
+                    "value": {
+                      "id": 1,
+                      "user_id": 1,
+                      "name": "saitamahaha",
+                      "phone": "081230901999",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "kotabumi"
+                    }
+                  },
+                  "ADDRESS 2": {
+                    "description": "Success updated address 2",
+                    "value": {
+                      "id": 2,
+                      "user_id": 1,
+                      "name": "jkw",
+                      "phone": "081230908722",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "slo"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Endpoint to delete address",
+        "description": "Used by a user to delete an address",
+        "tags": ["Member | Address"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "$ref": "#/components/parameters/addressId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/{userId}": {
+      "get": {
+        "summary": "Endpoint for get biodata by Id",
+        "description": "Used by admin to view biodata",
+        "tags": ["Admin | Profile"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "email": "user1@gmail.com",
+                    "phone": "081234567899"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Endpoint for edit biodata",
+        "description": "Used by admin to update biodata",
+        "tags": ["Admin | Profile"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users"
+              },
+              "example": {
+                "password": "abrakadabrahompimpa",
+                "phone": "081234567899"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "password": "abrakadabrahompimpa",
+                    "phone": "081234567899"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/{userId}/address": {
+      "get": {
+        "summary": "Endpoint to view addresses",
+        "description": "Used by admin to see all addresses that have been added",
+        "tags": ["Admin | Address"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addresses"
+                },
+                "example": {
+                  "status": "OK",
+                  "date": [
+                    {
+                      "id": 1,
+                      "user_id": 1,
+                      "name": "saitama",
+                      "phone": "081230901923",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "kotabumi rt01/02"
+                    },
+                    {
+                      "id": 2,
+                      "user_id": 1,
+                      "name": "saitama",
+                      "phone": "081230902222",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "kotabumi"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Endpoint for add address",
+        "description": "Used by admin to add an address",
+        "tags": ["Admin | Address"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addresses"
+              },
+              "examples": {
+                "ADDRESS 1": {
+                  "description": "Success add address 1",
+                  "value": {
+                    "name": "saitama",
+                    "phone": "081230901923",
+                    "city_district": "Solo",
+                    "postal_code": "57722",
+                    "address": "kotabumi"
+                  }
+                },
+                "ADDRESS 2": {
+                  "description": "Success add address 2",
+                  "value": {
+                    "name": "jkw",
+                    "phone": "081230908721",
+                    "city_district": "Solo",
+                    "postal_code": "57722",
+                    "address": "slo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success add address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addresses"
+                },
+                "examples": {
+                  "ADDRESS 1": {
+                    "description": "Success add address 1",
+                    "value": {
+                      "id": 1,
+                      "user_id": 1,
+                      "name": "saitama",
+                      "phone": "081230901923",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "kotabumi"
+                    }
+                  },
+                  "ADDRESS 2": {
+                    "description": "Success add address 2",
+                    "value": {
+                      "id": 2,
+                      "user_id": 1,
+                      "name": "jkw",
+                      "phone": "081230908721",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "slo"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/{userId}/address/{addressId}": {
+      "put": {
+        "summary": "Endpoint for updated address",
+        "description": "Used by admins to update an address",
+        "tags": ["Admin | Address"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "$ref": "#/components/parameters/addressId"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addresses"
+              },
+              "examples": {
+                "ADDRESS 1": {
+                  "description": "Success updated address 1",
+                  "value": {
+                    "name": "saitamahaha",
+                    "phone": "081230901999",
+                    "city_district": "Solo",
+                    "postal_code": "57722",
+                    "address": "kotabumi"
+                  }
+                },
+                "ADDRESS 2": {
+                  "description": "Success updated address 2",
+                  "value": {
+                    "name": "jkw",
+                    "phone": "081230908722",
+                    "city_district": "Solo",
+                    "postal_code": "57722",
+                    "address": "slo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success updated address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addresses"
+                },
+                "examples": {
+                  "ADDRESS 1": {
+                    "description": "Success updated address 1",
+                    "value": {
+                      "id": 1,
+                      "user_id": 1,
+                      "name": "saitamahaha",
+                      "phone": "081230901999",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "kotabumi"
+                    }
+                  },
+                  "ADDRESS 2": {
+                    "description": "Success updated address 2",
+                    "value": {
+                      "id": 2,
+                      "user_id": 1,
+                      "name": "jkw",
+                      "phone": "081230908722",
+                      "city_district": "Solo",
+                      "postal_code": "57722",
+                      "address": "slo"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Endpoint to delete address",
+        "description": "Used by admin to delete an address",
+        "tags": ["Admin | Address"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "$ref": "#/components/parameters/addressId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/{userId}/products": {
+      "get": {
+        "summary": "Endpoint for get products",
+        "description": "Used by admins to see all products that have been added",
+        "tags": ["Admin | Product"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "kandang kucing",
+                      "description": "warna merah",
+                      "qty": 4,
+                      "price": 122121212,
+                      "img": "KHkaljhksjBKAJBS.jpeg"
+                    },
+                    {
+                      "id": 2,
+                      "name": "tas kucing",
+                      "description": "warna merah",
+                      "qty": 4,
+                      "price": 122121212,
+                      "img": "KHkaljhksjBKAJBS.jpeg"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Endpoint for add new products",
+        "description": "Used by admin to add an item",
+        "tags": ["Admin | Product"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "requestBody": {
+          "description": "Add new product",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products"
+              },
+              "example": {
+                "name": "kandang kucing",
+                "description": "warna merah",
+                "qty": 5,
+                "price": 122121212,
+                "img": "KHkaljhksjBKAJBS.jpeg"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "kandang kucing",
+                    "description": "warna merah",
+                    "price": 122121212,
+                    "img": "KHkaljhksjBKAJBS.jpeg"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/{userId}/products/{productId}": {
+      "put": {
+        "summary": "Endpoint for update product",
+        "description": "Used by admin to update an item",
+        "tags": ["Admin | Product"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "$ref": "#/components/parameters/productId"
+          }
+        ],
+        "requestBody": {
+          "description": "update new product",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products"
+              },
+              "example": {
+                "name": "kadang kucing bonus kalung",
+                "description": "warna merah",
+                "qty": 5,
+                "price": 122121212,
+                "img": "KHkaljhksjBKAJBS.jpeg"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "kandang kucing bonus kalung",
+                    "description": "warna merah",
+                    "qty": 5,
+                    "price": 122121212,
+                    "img": "KHkaljhksjBKAJBS.jpeg"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Endpoint for delete product",
+        "description": "Used by admin to delete an item",
+        "tags": ["Admin | Product"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "$ref": "#/components/parameters/productId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SUCCESS",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/{userId}/adopt": {
+      "get": {
+        "summary": "Endpoint for get all adopt",
+        "description": "Used by admins to see all adoptions that have been added",
+        "tags": ["Admin | Adopt"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/animal_adoptions"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "kucing oren",
+                      "img": "kucing.jpeg",
+                      "age": 20,
+                      "animal_race": "anggora",
+                      "category_id": 1
+                    },
+                    {
+                      "id": 2,
+                      "name": "kucing gareng",
+                      "img": "kucing.jpeg",
+                      "age": 20,
+                      "animal_race": "anggora",
+                      "category_id": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Endpoint for add new animal adopt",
+        "description": "Used by admin to add new adoption",
+        "tags": ["Admin | Adopt"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "requestBody": {
+          "description": "Add new product",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/animal_adoptions"
+              },
+              "example": {
+                "name": "kucing oren",
+                "img": "kucing.jpeg",
+                "age": 20,
+                "animal_race": "anggora",
+                "category_id": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "kucing oren",
+                    "img": "kucing.jpeg",
+                    "age": 20,
+                    "animal_race": "anggora",
+                    "category_id": 1
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/{userId}/adopt/{adoptId}": {
+      "put": {
+        "summary": "Endpoint for update animal adopt",
+        "description": "Used by admins to update adopted animals",
+        "tags": ["Admin | Adopt"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "$ref": "#/components/parameters/productId"
+          }
+        ],
+        "requestBody": {
+          "description": "update new adopt",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products"
+              },
+              "example": {
+                "name": "kucing oyen",
+                "img": "kucing.jpeg",
+                "age": 20,
+                "animal_race": "anggora",
+                "category_id": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "kucing oyen",
+                    "img": "kucing.jpeg",
+                    "age": 20,
+                    "animal_race": "anggora",
+                    "category_id": 1
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Endpoint for delete animal adopt",
+        "description": "Used by admins to remove adopted animalsUsed by admins to remove adopted animals",
+        "tags": ["Admin | Adopt"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          },
+          {
+            "$ref": "#/components/parameters/productId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SUCCESS",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/orders": {
+      "get": {
+        "summary": "Endpoint get all orders",
+        "description": "Used by users to view all item transactions",
+        "tags": ["Member | Orders"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/order_products"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "product_id": 1,
+                      "order_id": 1,
+                      "qty": 3,
+                      "sub_total": "30.000"
+                    },
+                    {
+                      "id": 2,
+                      "product_id": 2,
+                      "order_id": 2,
+                      "qty": 3,
+                      "sub_total": "50.000"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Endpoint get all user orders",
+        "description": "Used by users to add orders",
+        "tags": ["Member | Orders"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "requestBody": {
+          "description": "Add new order",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/order_products"
+              },
+              "example": {
+                "product_id": 1,
+                "qty": 3,
+                "sub_total": "30.000"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success get all orders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/order_products"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "product_id": 1,
+                    "order_id": 1,
+                    "qty": 3,
+                    "sub_total": "30.000"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "Endpoint for get all products",
+        "description": "Used by all users to view products",
+        "tags": ["Users Activity"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "price",
+            "in": "query",
+            "description": "price filters",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "kandang burung",
+                      "description": "murah bangettt",
+                      "qty": 5,
+                      "price": 122121212,
+                      "img": "KHkaljhksjBKAJBS.jpeg"
+                    },
+                    {
+                      "id": 2,
+                      "name": "kandang jangkrik",
+                      "description": "oren gembul",
+                      "qty": 3,
+                      "price": 1111111,
+                      "img": "KHkaljhksjBKAJBS.jpeg"
+                    },
+                    {
+                      "id": 3,
+                      "name": "kandang buaya",
+                      "description": "tahan banting",
+                      "price": 222222222,
+                      "img": "KHkaljhksjBKAJBS.jpeg"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{productId}": {
+      "get": {
+        "summary": "Endpoint to get product by Id",
+        "description": "Used by all users to view details of a product",
+        "tags": ["Users Activity"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/productId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get product by Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "kandang burung",
+                    "description": "murah bangettt",
+                    "qty": 5,
+                    "price": 122121212,
+                    "img": "KHkaljhksjBKAJBS.jpeg"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adopts": {
+      "get": {
+        "summary": "Endpoint for get all animal adopt",
+        "description": "Used by all users to view all adopted animal",
+        "tags": ["Users Activity"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "price",
+            "in": "query",
+            "description": "price filters",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/animal_adoptions"
+                    }
+                  }
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "kucing oren",
+                      "img": "kucing.jpeg",
+                      "age": 20,
+                      "animal_race": "anggora",
+                      "category_id": 1
+                    },
+                    {
+                      "id": 2,
+                      "name": "kucing gareng",
+                      "img": "kucing2.jpeg",
+                      "age": 20,
+                      "animal_race": "anggora",
+                      "category_id": 1
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adopts/{adoptId}": {
+      "get": {
+        "summary": "Endpoint to get animal adopt by Id",
+        "description": "Used by all users to view details of a Used by all users to view details of an adopted animal",
+        "tags": ["Users Activity"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/productId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get product by Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/animal_adoptions"
+                    }
+                  }
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "kucing oren",
+                    "img": "kucing.jpeg",
+                    "age": 20,
+                    "animal_race": "anggora",
+                    "category_id": 1
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "userId": {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "description": "get userId",
+        "schema": {
+          "type": "string",
+          "example": "1"
+        }
+      },
+      "addressId": {
+        "name": "addressId",
+        "in": "path",
+        "required": true,
+        "description": "get addressId",
+        "schema": {
+          "type": "string",
+          "example": "1"
+        }
+      },
+      "productId": {
+        "name": "productId",
+        "in": "path",
+        "required": true,
+        "description": "get productId",
+        "schema": {
+          "type": "string",
+          "example": "1"
+        }
+      },
+      "shopping_carts": {
+        "name": "cartId",
+        "in": "path",
+        "required": true,
+        "description": "get cartId",
+        "schema": {
+          "type": "string",
+          "default": "1"
+        }
+      },
+      "access_token": {
+        "name": "x-access-token",
+        "in": "header",
+        "description": "member access",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "required": ["x-access-token"],
+          "type": "string",
+          "properties": {
+            "x-access-token": {
+              "type": "string",
+              "example": "tokenrahasia"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "users": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "access_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "role_id": {
+            "$ref": "#/components/schemas/roles"
+          }
+        }
+      },
+      "roles": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "addresses": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "$ref": "#/components/schemas/users"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "city_district": {
+            "type": "string"
+          },
+          "postal_code": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        }
+      },
+      "products": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "qty": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "string"
+          },
+          "img": {
+            "type": "string"
+          }
+        }
+      },
+      "orders": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "$ref": "#/components/schemas/users"
+          },
+          "address_id": {
+            "$ref": "#/components/schemas/addresses"
+          },
+          "shipping_cost": {
+            "type": "string"
+          },
+          "grand_total": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "order_products": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "$ref": "#/components/schemas/products"
+          },
+          "order_id": {
+            "$ref": "#/components/schemas/orders"
+          },
+          "qty": {
+            "type": "integer"
+          },
+          "sub_total": {
+            "type": "string"
+          }
+        }
+      },
+      "tags": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "product_tags": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "product_id": {
+            "$ref": "#/components/schemas/products"
+          },
+          "tags_id": {
+            "$ref": "#/components/schemas/tags"
+          }
+        }
+      },
+      "animal_adoptions": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "img": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "animal_race": {
+            "type": "string"
+          },
+          "category_id": {
+            "$ref": "#/components/schemas/category_id"
+          }
+        }
+      },
+      "category_id": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "shopping_carts": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "$ref": "#/components/schemas/users"
+          },
+          "product_id": {
+            "$ref": "#/components/schemas/products"
+          }
+        }
+      },
+      "supplies": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "product_id": {
+            "$ref": "#/components/schemas/products"
+          },
+          "qty": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "string"
+          }
+        }
+      },
+      "404": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "PAGE_NOT_FOUND!"
+              }
+            }
+          }
+        }
+      },
+      "deleted": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "SUCCESS_DELETED!"
+              }
+            }
+          }
+        }
+      },
+      "400": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "FAIL"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "BAD_REQUEST!"
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ERROR"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "INTERNAL_SERVER_ERROR!"
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "FAIL"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "UNAUTHORIZED!"
+              }
+            }
+          }
+        }
+      },
+      "403": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "FAIL"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "FORBIDDEN!"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerToken": {
+        "type": "http",
+        "description": "Authentication with JWT",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
