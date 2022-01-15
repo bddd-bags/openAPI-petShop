@@ -233,7 +233,7 @@
         }
       }
     },
-    "/v1/user/{userId}": {
+    "/v1/user": {
       "get": {
         "summary": "Endpoint for get biodata",
         "description": "Used by the user to view the user's bio",
@@ -242,9 +242,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           }
         ],
         "responses": {
@@ -315,9 +312,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           }
         ],
         "requestBody": {
@@ -328,7 +322,6 @@
                 "$ref": "#/components/schemas/users"
               },
               "example": {
-                "password": "abrakadabrahompimpa",
                 "phone": "081234567899"
               }
             }
@@ -345,7 +338,6 @@
                 "example": {
                   "status": "OK",
                   "data": {
-                    "password": "abrakadabrahompimpa",
                     "phone": "081234567899"
                   }
                 }
@@ -395,7 +387,7 @@
         }
       }
     },
-    "/v1/user/{userId}/cart": {
+    "/v1/user/cart": {
       "get": {
         "summary": "Endpoint for view carts",
         "description": "Used by the user to view items that have been added to the cart",
@@ -404,9 +396,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           }
         ],
         "responses": {
@@ -483,9 +472,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           }
         ],
         "requestBody": {
@@ -561,7 +547,7 @@
         }
       }
     },
-    "/v1//user/{userId}/cart/{cartId}": {
+    "/v1//user/cart/{cartId}": {
       "delete": {
         "summary": "Endpoint for delete product in carts",
         "description": "Used by the user to delete items in the cart",
@@ -570,9 +556,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           },
           {
             "$ref": "#/components/parameters/shopping_carts"
@@ -632,7 +615,7 @@
         }
       }
     },
-    "/v1/user/{userId}/address": {
+    "/v1/user/address": {
       "get": {
         "summary": "Endpoint to view addresses",
         "description": "Used by the user to view all addresses that have been added",
@@ -641,9 +624,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           }
         ],
         "responses": {
@@ -730,9 +710,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           }
         ],
         "requestBody": {
@@ -847,7 +824,7 @@
         }
       }
     },
-    "/v1/user/{userId}/address/{addressId}": {
+    "/v1/user/address/{addressId}": {
       "put": {
         "summary": "Endpoint for updated address",
         "description": "Used by users to view details of addresses that have been added",
@@ -856,9 +833,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           },
           {
             "$ref": "#/components/parameters/addressId"
@@ -982,9 +956,6 @@
         "security": [],
         "parameters": [
           {
-            "$ref": "#/components/parameters/userId"
-          },
-          {
             "$ref": "#/components/parameters/addressId"
           }
         ],
@@ -1042,7 +1013,7 @@
         }
       }
     },
-    "/admin/v1/{userId}": {
+    "/admin/v1/{id}": {
       "get": {
         "summary": "Endpoint for get biodata by Id",
         "description": "Used by admin to view biodata",
@@ -1196,7 +1167,7 @@
         }
       }
     },
-    "/admin/v1/{userId}/address": {
+    "/admin/v1/{id}/address": {
       "get": {
         "summary": "Endpoint to view addresses",
         "description": "Used by admin to see all addresses that have been added",
@@ -1403,7 +1374,7 @@
         }
       }
     },
-    "/admin/v1/{userId}/address/{addressId}": {
+    "/admin/v1/{id}/address/{addressId}": {
       "put": {
         "summary": "Endpoint for updated address",
         "description": "Used by admins to update an address",
@@ -1593,7 +1564,7 @@
         }
       }
     },
-    "/admin/v1/{userId}/products": {
+    "/admin/v1/{id}/products": {
       "get": {
         "summary": "Endpoint for get products",
         "description": "Used by admins to see all products that have been added",
@@ -1767,7 +1738,7 @@
         }
       }
     },
-    "/admin/v1/{userId}/products/{productId}": {
+    "/admin/v1/{id}/products/{productId}": {
       "put": {
         "summary": "Endpoint for update product",
         "description": "Used by admin to update an item",
@@ -1927,7 +1898,7 @@
         }
       }
     },
-    "/admin/v1/{userId}/adopt": {
+    "/admin/v1/{id}/adopt": {
       "get": {
         "summary": "Endpoint for get all adopt",
         "description": "Used by admins to see all adoptions that have been added",
@@ -2102,7 +2073,7 @@
         }
       }
     },
-    "/admin/v1/{userId}/adopt/{adoptId}": {
+    "/admin/v1/{id}/adopt/{adoptId}": {
       "put": {
         "summary": "Endpoint for update animal adopt",
         "description": "Used by admins to update adopted animals",
@@ -2262,7 +2233,7 @@
         }
       }
     },
-    "/v1/user/{userId}/orders": {
+    "/v1/user/orders": {
       "get": {
         "summary": "Endpoint get all orders",
         "description": "Used by users to view all item transactions",
@@ -2271,9 +2242,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           }
         ],
         "responses": {
@@ -2336,9 +2304,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/access_token"
-          },
-          {
-            "$ref": "#/components/parameters/userId"
           }
         ],
         "requestBody": {
@@ -2428,7 +2393,7 @@
         "security": [],
         "parameters": [
           {
-            "name": "price",
+            "name": "min_price",
             "in": "query",
             "description": "price filters",
             "required": false,
@@ -2437,6 +2402,39 @@
             "schema": {
               "type": "string",
               "default": "0"
+            }
+          },
+          {
+            "name": "max_price",
+            "in": "query",
+            "description": "price filters",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "description": "title filters",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "tags filters",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2544,7 +2542,7 @@
         "security": [],
         "parameters": [
           {
-            "name": "price",
+            "name": "min_price",
             "in": "query",
             "description": "price filters",
             "required": false,
@@ -2553,6 +2551,39 @@
             "schema": {
               "type": "string",
               "default": "0"
+            }
+          },
+          {
+            "name": "max_price",
+            "in": "query",
+            "description": "price filters",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "description": "title filters",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "category filters",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2657,7 +2688,7 @@
   "components": {
     "parameters": {
       "userId": {
-        "name": "userId",
+        "name": "id",
         "in": "path",
         "required": true,
         "description": "get userId",
