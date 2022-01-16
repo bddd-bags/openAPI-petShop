@@ -85,16 +85,14 @@
                   "description": "User login",
                   "value": {
                     "email": "user1@gmail.com",
-                    "password": "abrakadabra",
-                    "phone": "081234567890"
+                    "password": "abrakadabra"
                   }
                 },
                 "ADMIN": {
                   "description": "Admin login",
                   "value": {
                     "email": "admin@gmail.com",
-                    "password": "akuganteng",
-                    "phone": "081234567890"
+                    "password": "akuganteng"
                   }
                 }
               }
@@ -115,7 +113,6 @@
                     "value": {
                       "id": 1,
                       "email": "user1@gmail.com",
-                      "phone": "081234567890",
                       "role_id": 2
                     }
                   },
@@ -124,7 +121,6 @@
                     "value": {
                       "id": 2,
                       "email": "admin@gmail.com",
-                      "phone": "081234567890",
                       "role_id": 1
                     }
                   }
@@ -256,7 +252,8 @@
                   "status": "OK",
                   "data": {
                     "email": "user1@gmail.com",
-                    "phone": "081234567899"
+                    "phone": "081234567899",
+                    "address_id": 1
                   }
                 }
               }
@@ -322,7 +319,8 @@
                 "$ref": "#/components/schemas/users"
               },
               "example": {
-                "phone": "081234567899"
+                "phone": "081234567899",
+                "address_id": 2
               }
             }
           }
@@ -338,7 +336,9 @@
                 "example": {
                   "status": "OK",
                   "data": {
-                    "phone": "081234567899"
+                    "id": 1,
+                    "phone": "081234567899",
+                    "address_id": 2
                   }
                 }
               }
@@ -411,11 +411,13 @@
                   "data": [
                     {
                       "user_id": 1,
-                      "product_id": 1
+                      "product_id": 1,
+                      "qty": 3
                     },
                     {
                       "user_id": 1,
-                      "product_id": 2
+                      "product_id": 2,
+                      "qty": 1
                     }
                   ]
                 }
@@ -483,7 +485,8 @@
               },
               "example": {
                 "user_id": 1,
-                "product_id": 1
+                "product_id": 1,
+                "qty": 3
               }
             }
           }
@@ -499,7 +502,8 @@
                 "example": {
                   "id": 1,
                   "user_id": 1,
-                  "product_id": 1
+                  "product_id": 1,
+                  "qty": 3
                 }
               }
             }
@@ -547,7 +551,7 @@
         }
       }
     },
-    "/v1//user/cart/{cartId}": {
+    "/v1/user/cart/{cartId}": {
       "delete": {
         "summary": "Endpoint for delete product in carts",
         "description": "Used by the user to delete items in the cart",
@@ -717,12 +721,13 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/addresses"
+                "$ref": "#/components/schemas/addressEntity"
               },
               "examples": {
                 "ADDRESS 1": {
                   "description": "Success add address 1",
                   "value": {
+                    "user_id": 1,
                     "name": "saitama",
                     "phone": "081230901923",
                     "city_district": "Solo",
@@ -733,6 +738,7 @@
                 "ADDRESS 2": {
                   "description": "Success add address 2",
                   "value": {
+                    "user_id": 1,
                     "name": "jkw",
                     "phone": "081230908721",
                     "city_district": "Solo",
@@ -750,7 +756,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/addresses"
+                  "$ref": "#/components/schemas/addressEntity"
                 },
                 "examples": {
                   "ADDRESS 1": {
@@ -843,7 +849,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/addresses"
+                "$ref": "#/components/schemas/addressEntity"
               },
               "examples": {
                 "ADDRESS 1": {
@@ -876,7 +882,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/addresses"
+                  "$ref": "#/components/schemas/addressEntity"
                 },
                 "examples": {
                   "ADDRESS 1": {
@@ -1013,16 +1019,11 @@
         }
       }
     },
-    "/admin/v1/{id}": {
+    "/admin/v1": {
       "get": {
         "summary": "Endpoint for get biodata by Id",
         "description": "Used by admin to view biodata",
         "tags": ["Admin | Profile"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success updated",
@@ -1087,11 +1088,6 @@
         "summary": "Endpoint for edit biodata",
         "description": "Used by admin to update biodata",
         "tags": ["Admin | Profile"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          }
-        ],
         "requestBody": {
           "required": false,
           "content": {
@@ -1167,16 +1163,11 @@
         }
       }
     },
-    "/admin/v1/{id}/address": {
+    "/admin/v1/address": {
       "get": {
         "summary": "Endpoint to view addresses",
         "description": "Used by admin to see all addresses that have been added",
         "tags": ["Admin | Address"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1257,11 +1248,6 @@
         "summary": "Endpoint for add address",
         "description": "Used by admin to add an address",
         "tags": ["Admin | Address"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1374,15 +1360,12 @@
         }
       }
     },
-    "/admin/v1/{id}/address/{addressId}": {
+    "/admin/v1/address/{addressId}": {
       "put": {
         "summary": "Endpoint for updated address",
         "description": "Used by admins to update an address",
         "tags": ["Admin | Address"],
         "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          },
           {
             "$ref": "#/components/parameters/addressId"
           }
@@ -1504,9 +1487,6 @@
         "tags": ["Admin | Address"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/userId"
-          },
-          {
             "$ref": "#/components/parameters/addressId"
           }
         ],
@@ -1564,16 +1544,11 @@
         }
       }
     },
-    "/admin/v1/{id}/products": {
+    "/admin/v1/products": {
       "get": {
         "summary": "Endpoint for get products",
         "description": "Used by admins to see all products that have been added",
         "tags": ["Admin | Product"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1652,11 +1627,6 @@
         "summary": "Endpoint for add new products",
         "description": "Used by admin to add an item",
         "tags": ["Admin | Product"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          }
-        ],
         "requestBody": {
           "description": "Add new product",
           "content": {
@@ -1738,15 +1708,12 @@
         }
       }
     },
-    "/admin/v1/{id}/products/{productId}": {
+    "/admin/v1/products/{productId}": {
       "put": {
         "summary": "Endpoint for update product",
         "description": "Used by admin to update an item",
         "tags": ["Admin | Product"],
         "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          },
           {
             "$ref": "#/components/parameters/productId"
           }
@@ -1838,9 +1805,6 @@
         "tags": ["Admin | Product"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/userId"
-          },
-          {
             "$ref": "#/components/parameters/productId"
           }
         ],
@@ -1898,16 +1862,11 @@
         }
       }
     },
-    "/admin/v1/{id}/adopt": {
+    "/admin/v1/adopt": {
       "get": {
         "summary": "Endpoint for get all adopt",
         "description": "Used by admins to see all adoptions that have been added",
         "tags": ["Admin | Adopt"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1986,11 +1945,6 @@
         "summary": "Endpoint for add new animal adopt",
         "description": "Used by admin to add new adoption",
         "tags": ["Admin | Adopt"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/userId"
-          }
-        ],
         "requestBody": {
           "description": "Add new product",
           "content": {
@@ -2073,17 +2027,14 @@
         }
       }
     },
-    "/admin/v1/{id}/adopt/{adoptId}": {
+    "/admin/v1/adopt/{adoptId}": {
       "put": {
         "summary": "Endpoint for update animal adopt",
         "description": "Used by admins to update adopted animals",
         "tags": ["Admin | Adopt"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/userId"
-          },
-          {
-            "$ref": "#/components/parameters/productId"
+            "$ref": "#/components/parameters/adoptId"
           }
         ],
         "requestBody": {
@@ -2173,10 +2124,7 @@
         "tags": ["Admin | Adopt"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/userId"
-          },
-          {
-            "$ref": "#/components/parameters/productId"
+            "$ref": "#/components/parameters/adoptId"
           }
         ],
         "responses": {
@@ -2257,14 +2205,28 @@
                   "data": [
                     {
                       "id": 1,
-                      "product_id": 1,
+                      "product_id": {
+                        "id": 1,
+                        "name": "kandang burung",
+                        "description": "murah bangettt",
+                        "qty": 5,
+                        "price": 122121212,
+                        "img": "KHkaljhksjBKAJBS.jpeg"
+                      },
                       "order_id": 1,
                       "qty": 3,
                       "sub_total": "30.000"
                     },
                     {
                       "id": 2,
-                      "product_id": 2,
+                      "product_id": {
+                        "id": 2,
+                        "name": "kandang jangkrik",
+                        "description": "oren gembul",
+                        "qty": 3,
+                        "price": 1111111,
+                        "img": "KHkaljhksjBKAJBS.jpeg"
+                      },
                       "order_id": 2,
                       "qty": 3,
                       "sub_total": "50.000"
@@ -2542,29 +2504,6 @@
         "security": [],
         "parameters": [
           {
-            "name": "min_price",
-            "in": "query",
-            "description": "price filters",
-            "required": false,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string",
-              "default": "0"
-            }
-          },
-          {
-            "name": "max_price",
-            "in": "query",
-            "description": "price filters",
-            "required": false,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "title",
             "in": "query",
             "description": "title filters",
@@ -2638,7 +2577,7 @@
         "security": [],
         "parameters": [
           {
-            "$ref": "#/components/parameters/productId"
+            "$ref": "#/components/parameters/adoptId"
           }
         ],
         "responses": {
@@ -2712,6 +2651,16 @@
         "in": "path",
         "required": true,
         "description": "get productId",
+        "schema": {
+          "type": "string",
+          "example": "1"
+        }
+      },
+      "adoptId": {
+        "name": "adoptId",
+        "in": "path",
+        "required": true,
+        "description": "get adoptId",
         "schema": {
           "type": "string",
           "example": "1"
@@ -2860,19 +2809,22 @@
         }
       },
       "order_products": {
-        "type": "object",
-        "properties": {
-          "product_id": {
-            "$ref": "#/components/schemas/products"
-          },
-          "order_id": {
-            "$ref": "#/components/schemas/orders"
-          },
-          "qty": {
-            "type": "integer"
-          },
-          "sub_total": {
-            "type": "string"
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "product_id": {
+              "$ref": "#/components/schemas/products"
+            },
+            "order_id": {
+              "$ref": "#/components/schemas/orders"
+            },
+            "qty": {
+              "type": "integer"
+            },
+            "sub_total": {
+              "type": "string"
+            }
           }
         }
       },
@@ -2962,6 +2914,32 @@
             "type": "integer"
           },
           "date": {
+            "type": "string"
+          }
+        }
+      },
+      "addressEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "city_district": {
+            "type": "string"
+          },
+          "postal_code": {
+            "type": "string"
+          },
+          "address": {
             "type": "string"
           }
         }
