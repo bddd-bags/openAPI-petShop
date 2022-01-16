@@ -81,8 +81,8 @@
                 "$ref": "#/components/schemas/users"
               },
               "examples": {
-                "USER": {
-                  "description": "User login",
+                "MEMBER": {
+                  "description": "Member login",
                   "value": {
                     "email": "user1@gmail.com",
                     "password": "abrakadabra"
@@ -108,7 +108,7 @@
                   "$ref": "#/components/schemas/users"
                 },
                 "examples": {
-                  "USER": {
+                  "MEMBER": {
                     "description": "Success create user login",
                     "value": {
                       "id": 1,
