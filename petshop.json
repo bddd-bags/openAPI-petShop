@@ -62,56 +62,39 @@
       "description": "Operation about  __product__"
     },
     {
+      "name": "Admin | Tags",
+      "description": "Operation about  __tags__"
+    },
+    {
       "name": "Admin | Adopt",
       "description": "Operations about __adopt__"
+    },
+    {
+      "name": "Admin | Category",
+      "description": "Operations about __categories__"
     }
   ],
   "paths": {
-    "/v1/register": {
+    "/v1/auth/register": {
       "post": {
         "summary": "Endpoint for register user",
         "description": "Used by users to register in order to access endpoints that require access rights",
         "tags": ["Authentication"],
         "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/users"
-              },
-              "examples": {
-                "MEMBER": {
-                  "description": "Member login",
-                  "value": {
-                    "email": "user1@gmail.com",
-                    "password": "abrakadabra"
-                  }
-                },
-                "ADMIN": {
-                  "description": "Admin login",
-                  "value": {
-                    "email": "admin@gmail.com",
-                    "password": "akuganteng"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": "Success Register",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users"
+                  "$ref": "#/components/schemas/profiles"
                 },
                 "examples": {
                   "MEMBER": {
                     "description": "Success create user login",
                     "value": {
                       "id": 1,
+                      "user_id": "1",
                       "email": "user1@gmail.com",
                       "role_id": 2
                     }
@@ -120,6 +103,7 @@
                     "description": "Success create user login",
                     "value": {
                       "id": 2,
+                      "user_id": "2",
                       "email": "admin@gmail.com",
                       "role_id": 1
                     }
@@ -151,6 +135,95 @@
         }
       }
     },
+    "/v1/auth/check-role": {
+      "post": {
+        "summary": "Endpoint for check role admin",
+        "description": "Used to check admin access rights",
+        "tags": ["Authentication"],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "access_token",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "required": ["x-access-token"],
+              "type": "string",
+              "properties": {
+                "x-access-token": {
+                  "type": "string",
+                  "example": "tokenrahasia"
+                }
+              }
+            }
+          }
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success check",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "message": "SUCCESS"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/login": {
       "post": {
         "summary": "Endpoint for login",
@@ -162,7 +235,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/users"
+                "$ref": "#/components/schemas/profiles"
               },
               "examples": {
                 "MEMBER": {
@@ -189,7 +262,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users"
+                  "$ref": "#/components/schemas/profiles"
                 },
                 "examples": {
                   "MEMBER": {
@@ -246,7 +319,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users"
+                  "$ref": "#/components/schemas/profiles"
                 },
                 "example": {
                   "status": "OK",
@@ -316,7 +389,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/users"
+                "$ref": "#/components/schemas/profiles"
               },
               "example": {
                 "phone": "081234567899",
@@ -331,7 +404,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users"
+                  "$ref": "#/components/schemas/profiles"
                 },
                 "example": {
                   "status": "OK",
@@ -552,6 +625,93 @@
       }
     },
     "/v1/user/cart/{cartId}": {
+      "put": {
+        "summary": "Endpoint to edit qty product",
+        "description": "Used by the user to edit qty order products",
+        "tags": ["Member | Cart"],
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/access_token"
+          },
+          {
+            "$ref": "#/components/parameters/shopping_carts"
+          }
+        ],
+        "requestBody": {
+          "description": "Update qty product into cart",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/shopping_carts"
+              },
+              "example": {
+                "qty": 5
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/shopping_carts"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "user_id": 1,
+                    "product_id": 1,
+                    "qty": 5
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "summary": "Endpoint for delete product in carts",
         "description": "Used by the user to delete items in the cart",
@@ -567,7 +727,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success updated",
+            "description": "Success deleted",
             "content": {
               "application/json": {
                 "schema": {
@@ -646,18 +806,24 @@
                       "user_id": 2,
                       "name": "jkw",
                       "phone": "081230901923",
-                      "city_district": "Solo",
+                      "province": "Jawa Tengah",
+                      "city": "Solo",
                       "postal_code": "57722",
-                      "address": "kotabumi rt01/02"
+                      "address": "kotabumi rt01/02",
+                      "province_code": "33",
+                      "city_code": "2333"
                     },
                     {
                       "id": 2,
                       "user_id": 2,
                       "name": "jkw",
                       "phone": "081230902222",
-                      "city_district": "Solo",
+                      "province": "Jawa Tengah",
+                      "city": "Solo",
                       "postal_code": "57722",
-                      "address": "kotabumi"
+                      "address": "kotabumi",
+                      "province_code": "33",
+                      "city_code": "2333"
                     }
                   ]
                 }
@@ -721,29 +887,33 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/addressEntity"
+                "$ref": "#/components/schemas/addresses"
               },
               "examples": {
                 "ADDRESS 1": {
                   "description": "Success add address 1",
                   "value": {
-                    "user_id": 1,
                     "name": "saitama",
                     "phone": "081230901923",
-                    "city_district": "Solo",
+                    "province": "Jawa Tengah",
+                    "city": "Solo",
                     "postal_code": "57722",
-                    "address": "kotabumi"
+                    "address": "kotabumi",
+                    "province_code": "33",
+                    "city_code": "2313"
                   }
                 },
                 "ADDRESS 2": {
                   "description": "Success add address 2",
                   "value": {
-                    "user_id": 1,
                     "name": "jkw",
                     "phone": "081230908721",
-                    "city_district": "Solo",
+                    "province": "Jawa Tengah",
+                    "city": "Solo",
                     "postal_code": "57722",
-                    "address": "slo"
+                    "address": "slo",
+                    "province_code": "33",
+                    "city_code": "3012"
                   }
                 }
               }
@@ -756,7 +926,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/addressEntity"
+                  "$ref": "#/components/schemas/addresses"
                 },
                 "examples": {
                   "ADDRESS 1": {
@@ -766,9 +936,12 @@
                       "user_id": 1,
                       "name": "saitama",
                       "phone": "081230901923",
-                      "city_district": "Solo",
+                      "province": "Jawa Tengah",
+                      "city": "Solo",
                       "postal_code": "57722",
-                      "address": "kotabumi"
+                      "address": "kotabumi",
+                      "province_code": "33",
+                      "city_code": "2313"
                     }
                   },
                   "ADDRESS 2": {
@@ -778,9 +951,12 @@
                       "user_id": 1,
                       "name": "jkw",
                       "phone": "081230908721",
-                      "city_district": "Solo",
+                      "province": "Jawa Tengah",
+                      "city": "Solo",
                       "postal_code": "57722",
-                      "address": "slo"
+                      "address": "slo",
+                      "province_code": "33",
+                      "city_code": "3012"
                     }
                   }
                 }
@@ -849,7 +1025,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/addressEntity"
+                "$ref": "#/components/schemas/addresses"
               },
               "examples": {
                 "ADDRESS 1": {
@@ -857,9 +1033,12 @@
                   "value": {
                     "name": "saitamahaha",
                     "phone": "081230901999",
-                    "city_district": "Solo",
+                    "province": "Jawa Tengah",
+                    "city": "Solo",
                     "postal_code": "57722",
-                    "address": "kotabumi"
+                    "address": "kotabumi",
+                    "province_code": "33",
+                    "city_code": "310230"
                   }
                 },
                 "ADDRESS 2": {
@@ -867,9 +1046,12 @@
                   "value": {
                     "name": "jkw",
                     "phone": "081230908722",
+                    "province": "Jawa Tengah",
                     "city_district": "Solo",
                     "postal_code": "57722",
-                    "address": "slo"
+                    "address": "slo",
+                    "province_code": "33",
+                    "city_code": "12132"
                   }
                 }
               }
@@ -882,7 +1064,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/addressEntity"
+                  "$ref": "#/components/schemas/addresses"
                 },
                 "examples": {
                   "ADDRESS 1": {
@@ -892,9 +1074,12 @@
                       "user_id": 1,
                       "name": "saitamahaha",
                       "phone": "081230901999",
-                      "city_district": "Solo",
+                      "province": "Jawa Tengah",
+                      "city": "Solo",
                       "postal_code": "57722",
-                      "address": "kotabumi"
+                      "address": "kotabumi",
+                      "province_code": "33",
+                      "city_code": "310230"
                     }
                   },
                   "ADDRESS 2": {
@@ -904,9 +1089,12 @@
                       "user_id": 1,
                       "name": "jkw",
                       "phone": "081230908722",
+                      "province": "Jawa Tengah",
                       "city_district": "Solo",
                       "postal_code": "57722",
-                      "address": "slo"
+                      "address": "slo",
+                      "province_code": "33",
+                      "city_code": "12132"
                     }
                   }
                 }
@@ -1030,7 +1218,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users"
+                  "$ref": "#/components/schemas/profiles"
                 },
                 "example": {
                   "status": "OK",
@@ -1093,7 +1281,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/users"
+                "$ref": "#/components/schemas/profiles"
               },
               "example": {
                 "password": "abrakadabrahompimpa",
@@ -1108,7 +1296,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users"
+                  "$ref": "#/components/schemas/profiles"
                 },
                 "example": {
                   "status": "OK",
@@ -1174,30 +1362,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/addresses"
+                  "$ref": "#/components/schemas/addressEntity"
                 },
                 "example": {
                   "status": "OK",
-                  "date": [
-                    {
-                      "id": 1,
-                      "user_id": 1,
-                      "name": "saitama",
-                      "phone": "081230901923",
-                      "city_district": "Solo",
-                      "postal_code": "57722",
-                      "address": "kotabumi rt01/02"
-                    },
-                    {
-                      "id": 2,
-                      "user_id": 1,
-                      "name": "saitama",
-                      "phone": "081230902222",
-                      "city_district": "Solo",
-                      "postal_code": "57722",
-                      "address": "kotabumi"
-                    }
-                  ]
+                  "data": {
+                    "id": 1,
+                    "user_id": 1,
+                    "name": "abcdpetshop",
+                    "description": "jl.raya lt.2, depan rumah pak jkw",
+                    "province": "Jawa Tengah",
+                    "city": "Solo",
+                    "postal_code": "57722",
+                    "province_code": "33",
+                    "city_code": "2333"
+                  }
                 }
               }
             }
@@ -1253,29 +1432,16 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/addresses"
+                "$ref": "#/components/schemas/addressEntity"
               },
-              "examples": {
-                "ADDRESS 1": {
-                  "description": "Success add address 1",
-                  "value": {
-                    "name": "saitama",
-                    "phone": "081230901923",
-                    "city_district": "Solo",
-                    "postal_code": "57722",
-                    "address": "kotabumi"
-                  }
-                },
-                "ADDRESS 2": {
-                  "description": "Success add address 2",
-                  "value": {
-                    "name": "jkw",
-                    "phone": "081230908721",
-                    "city_district": "Solo",
-                    "postal_code": "57722",
-                    "address": "slo"
-                  }
-                }
+              "example": {
+                "name": "abcdpetshop",
+                "description": "jl.raya lt.2, depan rumah pak jkw",
+                "province": "Jawa Tengah",
+                "city": "Solo",
+                "postal_code": "57722",
+                "province_code": "33",
+                "city_code": "2333"
               }
             }
           }
@@ -1286,32 +1452,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/addresses"
+                  "$ref": "#/components/schemas/addressEntity"
                 },
-                "examples": {
-                  "ADDRESS 1": {
-                    "description": "Success add address 1",
-                    "value": {
-                      "id": 1,
-                      "user_id": 1,
-                      "name": "saitama",
-                      "phone": "081230901923",
-                      "city_district": "Solo",
-                      "postal_code": "57722",
-                      "address": "kotabumi"
-                    }
-                  },
-                  "ADDRESS 2": {
-                    "description": "Success add address 2",
-                    "value": {
-                      "id": 2,
-                      "user_id": 1,
-                      "name": "jkw",
-                      "phone": "081230908721",
-                      "city_district": "Solo",
-                      "postal_code": "57722",
-                      "address": "slo"
-                    }
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "user_id": 1,
+                    "name": "abcdpetshop",
+                    "description": "jl.raya lt.2, depan rumah pak jkw",
+                    "province": "Jawa Tengah",
+                    "city": "Solo",
+                    "postal_code": "57722",
+                    "province_code": "33",
+                    "city_code": "2333"
                   }
                 }
               }
@@ -1375,29 +1529,16 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/addresses"
+                "$ref": "#/components/schemas/addressEntity"
               },
-              "examples": {
-                "ADDRESS 1": {
-                  "description": "Success updated address 1",
-                  "value": {
-                    "name": "saitamahaha",
-                    "phone": "081230901999",
-                    "city_district": "Solo",
-                    "postal_code": "57722",
-                    "address": "kotabumi"
-                  }
-                },
-                "ADDRESS 2": {
-                  "description": "Success updated address 2",
-                  "value": {
-                    "name": "jkw",
-                    "phone": "081230908722",
-                    "city_district": "Solo",
-                    "postal_code": "57722",
-                    "address": "slo"
-                  }
-                }
+              "example": {
+                "name": "abcdpetshop",
+                "description": "jl.raya lt.2, depan rumah pak jkw",
+                "province": "Jawa Tengah",
+                "city": "Solo",
+                "postal_code": "57722",
+                "province_code": "33",
+                "city_code": "2333"
               }
             }
           }
@@ -1408,32 +1549,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/addresses"
+                  "$ref": "#/components/schemas/addressEntity"
                 },
-                "examples": {
-                  "ADDRESS 1": {
-                    "description": "Success updated address 1",
-                    "value": {
-                      "id": 1,
-                      "user_id": 1,
-                      "name": "saitamahaha",
-                      "phone": "081230901999",
-                      "city_district": "Solo",
-                      "postal_code": "57722",
-                      "address": "kotabumi"
-                    }
-                  },
-                  "ADDRESS 2": {
-                    "description": "Success updated address 2",
-                    "value": {
-                      "id": 2,
-                      "user_id": 1,
-                      "name": "jkw",
-                      "phone": "081230908722",
-                      "city_district": "Solo",
-                      "postal_code": "57722",
-                      "address": "slo"
-                    }
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "user_id": 1,
+                    "name": "abcdpetshop",
+                    "description": "jl.raya lt.2, depan rumah pak jkw",
+                    "province": "Jawa Tengah",
+                    "city": "Solo",
+                    "postal_code": "57722",
+                    "province_code": "33",
+                    "city_code": "2333"
                   }
                 }
               }
@@ -1555,26 +1684,52 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/products"
+                  "$ref": "#/components/schemas/product_tags"
                 },
                 "example": {
                   "status": "OK",
                   "data": [
                     {
                       "id": 1,
-                      "name": "kandang kucing",
-                      "description": "warna merah",
-                      "qty": 4,
-                      "price": 122121212,
-                      "img": "KHkaljhksjBKAJBS.jpeg"
+                      "product_id": {
+                        "id": 1,
+                        "name": "kandang kucing",
+                        "description": "warna merah",
+                        "qty": 4,
+                        "price": 122121212,
+                        "img": "KHkaljhksjBKAJBS.jpeg"
+                      },
+                      "tag_id": [
+                        {
+                          "id": 1,
+                          "name": "Kandang"
+                        },
+                        {
+                          "id": 6,
+                          "name": "Wadah"
+                        }
+                      ]
                     },
                     {
                       "id": 2,
-                      "name": "tas kucing",
-                      "description": "warna merah",
-                      "qty": 4,
-                      "price": 122121212,
-                      "img": "KHkaljhksjBKAJBS.jpeg"
+                      "product_id": {
+                        "id": 2,
+                        "name": "tas kucing",
+                        "description": "warna merah",
+                        "qty": 4,
+                        "price": 122121212,
+                        "img": "KHkaljhksjBKAJBS.jpeg"
+                      },
+                      "tag_id": [
+                        {
+                          "id": 2,
+                          "name": "Tas"
+                        },
+                        {
+                          "id": 7,
+                          "name": "Tas Gendong"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1639,7 +1794,8 @@
                 "description": "warna merah",
                 "qty": 5,
                 "price": 122121212,
-                "img": "KHkaljhksjBKAJBS.jpeg"
+                "img": "KHkaljhksjBKAJBS.jpeg",
+                "tag_id": [1, 2, 3]
               }
             }
           }
@@ -1650,16 +1806,33 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/products"
+                  "$ref": "#/components/schemas/product_tags"
                 },
                 "example": {
                   "status": "OK",
                   "data": {
                     "id": 1,
-                    "name": "kandang kucing",
-                    "description": "warna merah",
-                    "price": 122121212,
-                    "img": "KHkaljhksjBKAJBS.jpeg"
+                    "product_id": {
+                      "id": 1,
+                      "name": "kandang kucing",
+                      "description": "warna merah",
+                      "price": 122121212,
+                      "img": "KHkaljhksjBKAJBS.jpeg"
+                    },
+                    "tag_id": [
+                      {
+                        "id": 1,
+                        "name": "Kandang"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Kandang Kucing"
+                      },
+                      {
+                        "id": 3,
+                        "name": "Wadah"
+                      }
+                    ]
                   }
                 }
               }
@@ -1730,7 +1903,8 @@
                 "description": "warna merah",
                 "qty": 5,
                 "price": 122121212,
-                "img": "KHkaljhksjBKAJBS.jpeg"
+                "img": "KHkaljhksjBKAJBS.jpeg",
+                "tag_id": [1]
               }
             }
           }
@@ -1741,17 +1915,26 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/products"
+                  "$ref": "#/components/schemas/product_tags"
                 },
                 "example": {
                   "status": "OK",
                   "data": {
                     "id": 1,
-                    "name": "kandang kucing bonus kalung",
-                    "description": "warna merah",
-                    "qty": 5,
-                    "price": 122121212,
-                    "img": "KHkaljhksjBKAJBS.jpeg"
+                    "product_id": {
+                      "id": 1,
+                      "name": "kandang kucing bonus kalung",
+                      "description": "warna merah",
+                      "qty": 5,
+                      "price": 122121212,
+                      "img": "KHkaljhksjBKAJBS.jpeg"
+                    },
+                    "tag_id": [
+                      {
+                        "id": 1,
+                        "name": "Kandang"
+                      }
+                    ]
                   }
                 }
               }
@@ -1862,6 +2045,295 @@
         }
       }
     },
+    "/admin/v1/tags": {
+      "get": {
+        "summary": "Endpoint for get tags",
+        "description": "Used by admin to view tags",
+        "tags": ["Admin | Tags"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tags"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Kandang"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Tas"
+                    },
+                    {
+                      "id": 3,
+                      "name": "Pasir"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Endpoint for add new tags",
+        "description": "Used by admin to create new tags",
+        "tags": ["Admin | Tags"],
+        "requestBody": {
+          "description": "Create new tags",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/tags"
+              },
+              "example": {
+                "name": "Kandang"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tags"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Kandang"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/tags/{tagsId}": {
+      "put": {
+        "summary": "Endpoint to update a tags",
+        "description": "Used by admin to update tags",
+        "tags": ["Admin | Tags"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/tagsId"
+          }
+        ],
+        "requestBody": {
+          "description": "Update a tags",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/tags"
+              },
+              "example": {
+                "name": "Kandang 2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tags"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Kandang 2"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Endpoint for delete tags",
+        "description": "Used by admin to delete an item tags",
+        "tags": ["Admin | Tags"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/tagsId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SUCCESS",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/v1/adopt": {
       "get": {
         "summary": "Endpoint for get all adopt",
@@ -1884,7 +2356,10 @@
                       "img": "kucing.jpeg",
                       "age": 20,
                       "animal_race": "anggora",
-                      "category_id": 1
+                      "category": {
+                        "id": 1,
+                        "name": "Kucing"
+                      }
                     },
                     {
                       "id": 2,
@@ -1892,7 +2367,10 @@
                       "img": "kucing.jpeg",
                       "age": 20,
                       "animal_race": "anggora",
-                      "category_id": 1
+                      "category": {
+                        "id": 1,
+                        "name": "Kucing"
+                      }
                     }
                   ]
                 }
@@ -1957,7 +2435,7 @@
                 "img": "kucing.jpeg",
                 "age": 20,
                 "animal_race": "anggora",
-                "category_id": 1
+                "categoryId": 1
               }
             }
           }
@@ -1978,7 +2456,10 @@
                     "img": "kucing.jpeg",
                     "age": 20,
                     "animal_race": "anggora",
-                    "category_id": 1
+                    "category": {
+                      "id": 1,
+                      "name": "Kucing"
+                    }
                   }
                 }
               }
@@ -2125,6 +2606,295 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/adoptId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SUCCESS",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/category": {
+      "get": {
+        "summary": "Endpoint for get categories",
+        "description": "Used by admin to view categories",
+        "tags": ["Admin | Category"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/categories"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Kucing"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Kadal"
+                    },
+                    {
+                      "id": 3,
+                      "name": "Buaya"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Endpoint for add new categories",
+        "description": "Used by admin to create new categories",
+        "tags": ["Admin | Category"],
+        "requestBody": {
+          "description": "Create new category",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categories"
+              },
+              "example": {
+                "name": "Kadal"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/categories"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Kadal"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/v1/category/{categoryId}": {
+      "put": {
+        "summary": "Endpoint to update a categories",
+        "description": "Used by admin to update categories",
+        "tags": ["Admin | Category"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/categoryId"
+          }
+        ],
+        "requestBody": {
+          "description": "Update a categories",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categories"
+              },
+              "example": {
+                "name": "Kucing Anggora"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/categories"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Kucing Anggora"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "page not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Endpoint for delete categories",
+        "description": "Used by admin to delete an item categories",
+        "tags": ["Admin | Category"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/categoryId"
           }
         ],
         "responses": {
@@ -2406,35 +3176,287 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/products"
+                  "$ref": "#/components/schemas/product_tags"
                 },
-                "example": {
-                  "status": "OK",
-                  "data": [
-                    {
-                      "id": 1,
-                      "name": "kandang burung",
-                      "description": "murah bangettt",
-                      "qty": 5,
-                      "price": 122121212,
-                      "img": "KHkaljhksjBKAJBS.jpeg"
-                    },
-                    {
-                      "id": 2,
-                      "name": "kandang jangkrik",
-                      "description": "oren gembul",
-                      "qty": 3,
-                      "price": 1111111,
-                      "img": "KHkaljhksjBKAJBS.jpeg"
-                    },
-                    {
-                      "id": 3,
-                      "name": "kandang buaya",
-                      "description": "tahan banting",
-                      "price": 222222222,
-                      "img": "KHkaljhksjBKAJBS.jpeg"
+                "examples": {
+                  "PRODUCTS": {
+                    "description": "get products data",
+                    "value": {
+                      "status": "OK",
+                      "data": [
+                        {
+                          "id": 1,
+                          "product_id": {
+                            "id": 1,
+                            "name": "kandang burung",
+                            "description": "murah bangettt",
+                            "qty": 5,
+                            "price": 122121212,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Kandang"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 2,
+                          "product_id": {
+                            "id": 2,
+                            "name": "kandang jangkrik",
+                            "description": "tahan panas",
+                            "qty": 3,
+                            "price": 1111111,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Kandang"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 3,
+                          "product_id": {
+                            "id": 3,
+                            "name": "kandang buaya",
+                            "description": "tahan banting",
+                            "price": 222222222,
+                            "qty": 3,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Kandang"
+                            }
+                          ]
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "MIN_PRICE": {
+                    "description": "Get data products by min_price example 100000",
+                    "value": {
+                      "status": "OK",
+                      "data": [
+                        {
+                          "id": 1,
+                          "product_id": {
+                            "id": 1,
+                            "name": "kandang burung",
+                            "description": "murah bangettt",
+                            "qty": 5,
+                            "price": 200000,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Kandang"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 2,
+                          "product_id": {
+                            "id": 2,
+                            "name": "kandang jangkrik",
+                            "description": "tahan panas",
+                            "qty": 3,
+                            "price": 300000,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Kandang"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 3,
+                          "product_id": {
+                            "id": 3,
+                            "name": "kandang buaya",
+                            "description": "tahan banting",
+                            "price": 150000,
+                            "qty": 3,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Kandang"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "MAX_PRICE": {
+                    "description": "Get data product by max_price example 100000",
+                    "value": {
+                      "status": "OK",
+                      "data": [
+                        {
+                          "id": 1,
+                          "product_id": {
+                            "id": 1,
+                            "name": "kandang burung",
+                            "description": "murah bangettt",
+                            "qty": 5,
+                            "price": 30000,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Kandang"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 2,
+                          "product_id": {
+                            "id": 2,
+                            "name": "kandang jangkrik",
+                            "description": "tahan panas",
+                            "qty": 3,
+                            "price": 99000,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Kandang"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 3,
+                          "product_id": {
+                            "id": 3,
+                            "name": "kandang buaya",
+                            "description": "tahan banting",
+                            "price": 80000,
+                            "qty": 3,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Kandang"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "TITLE": {
+                    "description": "Get data product by title example Pasir",
+                    "value": {
+                      "status": "OK",
+                      "data": [
+                        {
+                          "id": 1,
+                          "product_id": {
+                            "id": 1,
+                            "name": "Pasir Pantai original",
+                            "description": "barang dijamin ori",
+                            "qty": 5,
+                            "price": 1000000,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Pasir"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 2,
+                          "product_id": {
+                            "id": 5,
+                            "name": "Pasir lereng gunung Merapi",
+                            "description": "barang original",
+                            "qty": 3,
+                            "price": 99000,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "Pasir"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "TAGS": {
+                    "description": "Get data product by Tags example kandang",
+                    "value": {
+                      "status": "OK",
+                      "data": [
+                        {
+                          "id": 1,
+                          "product_id": {
+                            "id": 1,
+                            "name": "kandang burung",
+                            "description": "murah bangettt",
+                            "qty": 5,
+                            "price": 30000,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "kandang"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 2,
+                          "product_id": {
+                            "id": 2,
+                            "name": "kandang jangkrik",
+                            "description": "tahan panas",
+                            "qty": 3,
+                            "price": 200000,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "kandang"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 3,
+                          "product_id": {
+                            "id": 3,
+                            "name": "kandang buaya",
+                            "description": "tahan banting",
+                            "price": 80000,
+                            "qty": 3,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "kandang"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -2496,6 +3518,43 @@
         }
       }
     },
+    "/tags": {
+      "get": {
+        "summary": "Endpoint to view tags",
+        "description": "Used by all users to view details of a Used by all users to view a tags",
+        "tags": ["Users Activity"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tags"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Tas"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Pasir"
+                    },
+                    {
+                      "id": 3,
+                      "name": "Kandang"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/adopts": {
       "get": {
         "summary": "Endpoint for get all animal adopt",
@@ -2542,26 +3601,88 @@
                     }
                   }
                 },
-                "example": {
-                  "status": "OK",
-                  "data": [
-                    {
-                      "id": 1,
-                      "name": "kucing oren",
-                      "img": "kucing.jpeg",
-                      "age": 20,
-                      "animal_race": "anggora",
-                      "category_id": 1
-                    },
-                    {
-                      "id": 2,
-                      "name": "kucing gareng",
-                      "img": "kucing2.jpeg",
-                      "age": 20,
-                      "animal_race": "anggora",
-                      "category_id": 1
+                "examples": {
+                  "TITLE": {
+                    "description": "Get data product by title example Kucing",
+                    "value": {
+                      "status": "OK",
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "Kucing Persia",
+                          "description": "warna oren",
+                          "qty": 5,
+                          "price": 1000000,
+                          "img": "KHkaljhksjBKAJBS.jpeg",
+                          "category": {
+                            "id": 1,
+                            "name": "Kucing"
+                          }
+                        },
+                        {
+                          "id": 5,
+                          "name": "Kucing Anggora X Hima",
+                          "description": "warna abu-abu",
+                          "qty": 3,
+                          "price": 2000000,
+                          "img": "KHkaljhksjBKAJBS.jpeg",
+                          "category": {
+                            "id": 1,
+                            "name": "Kucing"
+                          }
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "CATEGORIES": {
+                    "description": "Get data product by Tags example Anggora",
+                    "value": {
+                      "status": "OK",
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "kucing anggora",
+                          "description": "murah bangettt",
+                          "qty": 5,
+                          "price": 30000,
+                          "img": "KHkaljhksjBKAJBS.jpeg",
+                          "category": {
+                            "id": 1,
+                            "name": "Anggora"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "name": "kucing bulu tebal",
+                          "description": "oren gembul",
+                          "qty": 3,
+                          "price": 200000,
+                          "img": "KHkaljhksjBKAJBS.jpeg",
+                          "category": {
+                            "id": 1,
+                            "name": "Anggora"
+                          }
+                        },
+                        {
+                          "id": 3,
+                          "product_id": {
+                            "id": 3,
+                            "name": "kandang buaya",
+                            "description": "tahan banting",
+                            "price": 80000,
+                            "qty": 3,
+                            "img": "KHkaljhksjBKAJBS.jpeg"
+                          },
+                          "tag_id": [
+                            {
+                              "id": 1,
+                              "name": "kandang"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -2604,7 +3725,10 @@
                     "img": "kucing.jpeg",
                     "age": 20,
                     "animal_race": "anggora",
-                    "category_id": 1
+                    "category": {
+                      "id": 1,
+                      "name": "Kucing"
+                    }
                   }
                 }
               }
@@ -2616,6 +3740,43 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "summary": "Endpoint to view categories",
+        "description": "Used by all users to view details of a Used by all users to view a categories",
+        "tags": ["Users Activity"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/categories"
+                },
+                "example": {
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Kucing"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Kadal"
+                    },
+                    {
+                      "id": 3,
+                      "name": "Buaya"
+                    }
+                  ]
                 }
               }
             }
@@ -2654,6 +3815,24 @@
         "schema": {
           "type": "string",
           "example": "1"
+        }
+      },
+      "tagsId": {
+        "name": "tagsId",
+        "in": "path",
+        "required": true,
+        "description": "get tagsId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "categoryId": {
+        "name": "categoryId",
+        "in": "path",
+        "required": true,
+        "description": "get categoryId",
+        "schema": {
+          "type": "string"
         }
       },
       "adoptId": {
@@ -2696,11 +3875,14 @@
       }
     },
     "schemas": {
-      "users": {
+      "profiles": {
         "type": "object",
         "properties": {
           "id": {
             "type": "integer"
+          },
+          "user_id": {
+            "type": "string"
           },
           "email": {
             "type": "string"
@@ -2740,7 +3922,7 @@
             "type": "integer"
           },
           "user_id": {
-            "$ref": "#/components/schemas/users"
+            "$ref": "#/components/schemas/profiles"
           },
           "name": {
             "type": "string"
@@ -2748,13 +3930,51 @@
           "phone": {
             "type": "string"
           },
-          "city_district": {
+          "province": {
+            "type": "string"
+          },
+          "city": {
             "type": "string"
           },
           "postal_code": {
             "type": "string"
           },
           "address": {
+            "type": "string"
+          },
+          "province_code": {
+            "type": "string"
+          },
+          "city_code": {
+            "type": "string"
+          }
+        }
+      },
+      "addressEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "province": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "postal_code": {
+            "type": "string"
+          },
+          "province_code": {
+            "type": "string"
+          },
+          "city_code": {
             "type": "string"
           }
         }
@@ -2789,7 +4009,7 @@
             "type": "integer"
           },
           "user_id": {
-            "$ref": "#/components/schemas/users"
+            "$ref": "#/components/schemas/profiles"
           },
           "address_id": {
             "$ref": "#/components/schemas/addresses"
@@ -2848,7 +4068,7 @@
           "product_id": {
             "$ref": "#/components/schemas/products"
           },
-          "tags_id": {
+          "tag_id": {
             "$ref": "#/components/schemas/tags"
           }
         }
@@ -2871,12 +4091,12 @@
           "animal_race": {
             "type": "string"
           },
-          "category_id": {
-            "$ref": "#/components/schemas/category_id"
+          "categoryId": {
+            "$ref": "#/components/schemas/categories"
           }
         }
       },
-      "category_id": {
+      "categories": {
         "type": "object",
         "properties": {
           "id": {
@@ -2894,53 +4114,10 @@
             "type": "integer"
           },
           "user_id": {
-            "$ref": "#/components/schemas/users"
+            "$ref": "#/components/schemas/profiles"
           },
           "product_id": {
             "$ref": "#/components/schemas/products"
-          }
-        }
-      },
-      "supplies": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "product_id": {
-            "$ref": "#/components/schemas/products"
-          },
-          "qty": {
-            "type": "integer"
-          },
-          "date": {
-            "type": "string"
-          }
-        }
-      },
-      "addressEntity": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "user_id": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string"
-          },
-          "city_district": {
-            "type": "string"
-          },
-          "postal_code": {
-            "type": "string"
-          },
-          "address": {
-            "type": "string"
           }
         }
       },
