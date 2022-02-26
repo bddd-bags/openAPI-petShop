@@ -1,57 +1,58 @@
 openapi: 3.0.0
 info:
+  version: 1.0.0
   title: PETSHOP
   description: openAPI for final project
   contact:
     name: Kelompok 3
-    url: "-"
+    url: '-'
   license:
     name: APACHE 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  version: 1.0.0
 servers:
-- url: "{{baseUrl}}/api"
-  description: Mock Server
+  - url: '{{baseUrl}}/api'
+    description: Mock Server
 security:
-- BearerToken: []
+  - BearerToken: []
 tags:
-- name: Users Activity
-  description: Operation to __User Activity__
-- name: Authentication
-  description: Operation to __register__ and __login__
-- name: Member | Profile
-  description: Operation in profile __member__
-- name: Member | Address
-  description: Operation in profile __member__
-- name: Member | Cart
-  description: Operation into  __cart__
-- name: Member | Orders
-  description: Operations to make __transactions__
-- name: Admin | Profile
-  description: Operation in profile __admin__
-- name: Admin | Address
-  description: Operation in profile __admin__
-- name: Admin | Product
-  description: Operation about  __product__
-- name: Admin | Supplies
-  description: Operation about  __supplies product__
-- name: Admin | Tags
-  description: Operation about  __tags__
-- name: Admin | Adopt
-  description: Operations about __adopt__
-- name: Admin | Category
-  description: Operations about __categories__
+  - name: Users Activity
+    description: Operation to __User Activity__
+  - name: Authentication
+    description: Operation to __register__ and __login__
+  - name: Member | Profile
+    description: Operation in profile __member__
+  - name: Member | Address
+    description: Operation in profile __member__
+  - name: Member | Cart
+    description: Operation into  __cart__
+  - name: Member | Orders
+    description: Operations to make __transactions__
+  - name: Admin | About
+    description: Operation in profile __admin__
+  - name: Admin | Product
+    description: Operation about  __product__
+  - name: Admin | Supplies
+    description: Operation about  __supplies product__
+  - name: Admin | Tags
+    description: Operation about  __tags__
+  - name: Admin | Adopt
+    description: Operations about __adopt__
+  - name: Admin | Category
+    description: Operations about __categories__
+  - name: Admin | Order
+    description: Operations about __order__
+  - name: Admin | Histories
+    description: Operations about __histories__
 paths:
   /v1/auth/register:
     post:
-      tags:
-      - Authentication
       summary: Endpoint for register user
-      description: Used by users to register in order to access endpoints that require
-        access rights
-      operationId: v1AuthRegisterPOST
+      description: Used by users to register in order to access endpoints that require access rights
+      tags:
+        - Authentication
+      security: []
       responses:
-        "201":
+        '201':
           description: Success Register
           content:
             application/json:
@@ -62,107 +63,98 @@ paths:
                   description: Success create user login
                   value:
                     id: 1
-                    user_id: "1"
+                    user_id: '1'
                     email: user1@gmail.com
                     role_id: 2
                 ADMIN:
                   description: Success create user login
                   value:
                     id: 2
-                    user_id: "2"
+                    user_id: '2'
                     email: admin@gmail.com
                     role_id: 1
-        "400":
+        '400':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/400'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: Authentication
   /v1/auth/check-role:
     post:
-      tags:
-      - Authentication
       summary: Endpoint for check role admin
       description: Used to check admin access rights
-      operationId: v1AuthCheck_rolePOST
+      tags:
+        - Authentication
       parameters:
-      - name: x-access-token
-        in: header
-        description: access_token
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - x-access-token
-          type: string
-          properties:
-            x-access-token:
-              type: string
-              example: tokenrahasia
+        - name: x-access-token
+          in: header
+          description: access_token
+          required: true
+          style: simple
+          explode: false
+          schema:
+            required:
+              - x-access-token
+            type: string
+            properties:
+              x-access-token:
+                type: string
+                example: tokenrahasia
+      security: []
       responses:
-        "200":
+        '200':
           description: Success check
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
               example:
                 status: OK
                 data:
                   message: SUCCESS
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: Authentication
   /v1/user:
     get:
-      tags:
-      - Member | Profile
       summary: Endpoint for get biodata
       description: Used by the user to view the user's bio
-      operationId: v1UserGET
+      tags:
+        - Member | Profile
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
+        - $ref: '#/components/parameters/access_token'
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
@@ -172,66 +164,51 @@ paths:
                 status: OK
                 data:
                   email: user1@gmail.com
-                  phone: "081234567899"
+                  phone: '081234567899'
                   address_id: 1
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberProfile
     put:
-      tags:
-      - Member | Profile
       summary: Endpoint for update biodata
       description: Used by the user to update the user's bio
-      operationId: v1UserPUT
+      tags:
+        - Member | Profile
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
+        - $ref: '#/components/parameters/access_token'
       requestBody:
+        required: false
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/profiles'
             example:
-              phone: "081234567899"
+              phone: '081234567899'
               address_id: 2
-        required: false
       responses:
-        "201":
+        '201':
           description: Success updated
           content:
             application/json:
@@ -241,119 +218,120 @@ paths:
                 status: OK
                 data:
                   id: 1
-                  phone: "081234567899"
+                  phone: '081234567899'
                   address_id: 2
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberProfile
   /v1/user/cart:
     get:
-      tags:
-      - Member | Cart
       summary: Endpoint for view carts
       description: Used by the user to view items that have been added to the cart
-      operationId: v1UserCartGET
+      tags:
+        - Member | Cart
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
+        - $ref: '#/components/parameters/access_token'
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/shopping_carts'
               example:
-                status: OK
                 data:
-                - user_id: 1
-                  product_id: 1
-                  qty: 3
-                - user_id: 1
-                  product_id: 2
-                  qty: 1
-        "401":
+                  carts:
+                    - id: 9
+                      user_id: XSgo6cGNR8XhpKDbmmbfi3lYe1e2
+                      product_id: 5
+                      quantity: 2
+                      createdAt: '2022-02-25T17:39:49.956Z'
+                      updatedAt: '2022-02-25T17:39:49.956Z'
+                      product:
+                        id: 5
+                        name: vitamin c
+                        description: oke la
+                        qty: 20
+                        price: 25000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.28.jpeg?alt=media&token=e2df4196-4bf0-454c-9941-841d765a8947
+                        weight: 1
+                        sold: 8
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-25T17:03:42.348Z'
+                    - id: 8
+                      user_id: XSgo6cGNR8XhpKDbmmbfi3lYe1e2
+                      product_id: 3
+                      quantity: 2
+                      createdAt: '2022-02-25T17:37:45.357Z'
+                      updatedAt: '2022-02-25T17:37:45.357Z'
+                      product:
+                        id: 3
+                        name: kandang 4 tingkat
+                        description: paten3
+                        qty: 15
+                        price: 555000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29.jpeg?alt=media&token=89bc51e6-12e4-4584-ad94-54d856498a60
+                        weight: 4
+                        sold: 1
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-25T17:03:42.348Z'
+                  totalPrice: 1160000
+                  totalWeight: 5
+                message: Success
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberCart
     post:
-      tags:
-      - Member | Cart
       summary: Endpoint to add product into the cart
       description: Used by user to add items to cart
-      operationId: v1UserCartPOST
+      tags:
+        - Member | Cart
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
+        - $ref: '#/components/parameters/access_token'
       requestBody:
         description: Add product into cart
         content:
@@ -364,74 +342,53 @@ paths:
               product_id: 1
               qty: 3
       responses:
-        "201":
+        '201':
           description: Add product into cart
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/shopping_carts'
               example:
-                id: 1
-                user_id: 1
-                product_id: 1
-                qty: 3
-        "401":
+                data:
+                  id: 8
+                  user_id: XSgo6cGNR8XhpKDbmmbfi3lYe1e2
+                  product_id: 3
+                  quantity: 2
+                  updatedAt: '2022-02-25T17:37:45.357Z'
+                  createdAt: '2022-02-25T17:37:45.357Z'
+                message: Success
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: Page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberCart
-  /v1/user/cart/{cartId}:
     put:
-      tags:
-      - Member | Cart
       summary: Endpoint to edit qty product
       description: Used by the user to edit qty order products
-      operationId: v1UserCartCartIdPUT
+      tags:
+        - Member | Cart
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
-      - name: cartId
-        in: path
-        description: get cartId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          default: "1"
+        - $ref: '#/components/parameters/access_token'
       requestBody:
         description: Update qty product into cart
         content:
@@ -439,9 +396,10 @@ paths:
             schema:
               $ref: '#/components/schemas/shopping_carts'
             example:
+              product_id: 3
               qty: 5
       responses:
-        "201":
+        '201':
           description: Success Updated
           content:
             application/json:
@@ -450,198 +408,152 @@ paths:
               example:
                 status: OK
                 data:
-                  user_id: 1
-                  product_id: 1
-                  qty: 5
-        "401":
+                  data:
+                    id: 8
+                    user_id: XSgo6cGNR8XhpKDbmmbfi3lYe1e2
+                    product_id: 3
+                    quantity: 7
+                    updatedAt: '2022-02-25T17:37:45.357Z'
+                    createdAt: '2022-02-25T17:37:45.357Z'
+                  message: Success
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberCart
+  /v1/user/cart/{cartId}:
     delete:
-      tags:
-      - Member | Cart
       summary: Endpoint for delete product in carts
       description: Used by the user to delete items in the cart
-      operationId: v1UserCartCartIdDELETE
+      tags:
+        - Member | Cart
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
-      - name: cartId
-        in: path
-        description: get cartId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          default: "1"
+        - $ref: '#/components/parameters/access_token'
+        - $ref: '#/components/parameters/shopping_carts'
       responses:
-        "200":
+        '200':
           description: Success deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/deleted'
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberCart
   /v1/user/address:
     get:
-      tags:
-      - Member | Address
       summary: Endpoint to view addresses
       description: Used by the user to view all addresses that have been added
-      operationId: v1UserAddressGET
+      tags:
+        - Member | Address
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
+        - $ref: '#/components/parameters/access_token'
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/addresses'
               example:
-                status: OK
-                date:
-                - id: 1
-                  user_id: 2
-                  name: jkw
-                  phone: "081230901923"
-                  province: Jawa Tengah
-                  city: Solo
-                  postal_code: "57722"
-                  address: kotabumi rt01/02
-                  province_code: "33"
-                  city_code: "2333"
-                - id: 2
-                  user_id: 2
-                  name: jkw
-                  phone: "081230902222"
-                  province: Jawa Tengah
-                  city: Solo
-                  postal_code: "57722"
-                  address: kotabumi
-                  province_code: "33"
-                  city_code: "2333"
-        "401":
+                message: OK
+                data:
+                  - id: 1
+                    user_id: 2
+                    name: jkw
+                    phone: '081230901923'
+                    province: Jawa Tengah
+                    city: Solo
+                    postal_code: '57722'
+                    address: kotabumi rt01/02
+                    province_code: '33'
+                    city_code: '2333'
+                  - id: 2
+                    user_id: 2
+                    name: jkw
+                    phone: '081230902222'
+                    province: Jawa Tengah
+                    city: Solo
+                    postal_code: '57722'
+                    address: kotabumi
+                    province_code: '33'
+                    city_code: '2333'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: Page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberAddress
     post:
-      tags:
-      - Member | Address
       summary: Endpoint for add address
       description: Used by user to add address
-      operationId: v1UserAddressPOST
+      tags:
+        - Member | Address
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
+        - $ref: '#/components/parameters/access_token'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -651,27 +563,26 @@ paths:
                 description: Success add address 1
                 value:
                   name: saitama
-                  phone: "081230901923"
+                  phone: '081230901923'
                   province: Jawa Tengah
                   city: Solo
-                  postal_code: "57722"
+                  postal_code: '57722'
                   address: kotabumi
-                  province_code: "33"
-                  city_code: "2313"
+                  province_code: '33'
+                  city_code: '2313'
               ADDRESS 2:
                 description: Success add address 2
                 value:
                   name: jkw
-                  phone: "081230908721"
+                  phone: '081230908721'
                   province: Jawa Tengah
                   city: Solo
-                  postal_code: "57722"
+                  postal_code: '57722'
                   address: slo
-                  province_code: "33"
-                  city_code: "3012"
-        required: true
+                  province_code: '33'
+                  city_code: '3012'
       responses:
-        "201":
+        '201':
           description: Success add address
           content:
             application/json:
@@ -681,87 +592,69 @@ paths:
                 ADDRESS 1:
                   description: Success add address 1
                   value:
-                    id: 1
-                    user_id: 1
-                    name: saitama
-                    phone: "081230901923"
-                    province: Jawa Tengah
-                    city: Solo
-                    postal_code: "57722"
-                    address: kotabumi
-                    province_code: "33"
-                    city_code: "2313"
+                    message: OK
+                    data:
+                      id: 1
+                      user_id: 1
+                      name: saitama
+                      phone: '081230901923'
+                      province: Jawa Tengah
+                      city: Solo
+                      postal_code: '57722'
+                      address: kotabumi
+                      province_code: '33'
+                      city_code: '2313'
                 ADDRESS 2:
                   description: Success add address 2
                   value:
-                    id: 2
-                    user_id: 1
-                    name: jkw
-                    phone: "081230908721"
-                    province: Jawa Tengah
-                    city: Solo
-                    postal_code: "57722"
-                    address: slo
-                    province_code: "33"
-                    city_code: "3012"
-        "401":
+                    message: OK
+                    data:
+                      id: 2
+                      user_id: 1
+                      name: jkw
+                      phone: '081230908721'
+                      province: Jawa Tengah
+                      city: Solo
+                      postal_code: '57722'
+                      address: slo
+                      province_code: '33'
+                      city_code: '3012'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberAddress
   /v1/user/address/{addressId}:
     put:
-      tags:
-      - Member | Address
       summary: Endpoint for updated address
       description: Used by users to view details of addresses that have been added
-      operationId: v1UserAddressAddressIdPUT
+      tags:
+        - Member | Address
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
-      - name: addressId
-        in: path
-        description: get addressId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/access_token'
+        - $ref: '#/components/parameters/addressId'
       requestBody:
+        required: false
         content:
           application/json:
             schema:
@@ -771,27 +664,26 @@ paths:
                 description: Success updated address 1
                 value:
                   name: saitamahaha
-                  phone: "081230901999"
+                  phone: '081230901999'
                   province: Jawa Tengah
                   city: Solo
-                  postal_code: "57722"
+                  postal_code: '57722'
                   address: kotabumi
-                  province_code: "33"
-                  city_code: "310230"
+                  province_code: '33'
+                  city_code: '310230'
               ADDRESS 2:
                 description: Success updated address 2
                 value:
                   name: jkw
-                  phone: "081230908722"
+                  phone: '081230908722'
                   province: Jawa Tengah
                   city_district: Solo
-                  postal_code: "57722"
+                  postal_code: '57722'
                   address: slo
-                  province_code: "33"
-                  city_code: "12132"
-        required: false
+                  province_code: '33'
+                  city_code: '12132'
       responses:
-        "201":
+        '201':
           description: Success updated address
           content:
             application/json:
@@ -801,209 +693,104 @@ paths:
                 ADDRESS 1:
                   description: Success updated address 1
                   value:
-                    id: 1
-                    user_id: 1
-                    name: saitamahaha
-                    phone: "081230901999"
-                    province: Jawa Tengah
-                    city: Solo
-                    postal_code: "57722"
-                    address: kotabumi
-                    province_code: "33"
-                    city_code: "310230"
+                    message: OK
+                    data:
+                      id: 1
+                      user_id: 1
+                      name: saitamahaha
+                      phone: '081230901999'
+                      province: Jawa Tengah
+                      city: Solo
+                      postal_code: '57722'
+                      address: kotabumi
+                      province_code: '33'
+                      city_code: '310230'
                 ADDRESS 2:
                   description: Success updated address 2
                   value:
-                    id: 2
-                    user_id: 1
-                    name: jkw
-                    phone: "081230908722"
-                    province: Jawa Tengah
-                    city_district: Solo
-                    postal_code: "57722"
-                    address: slo
-                    province_code: "33"
-                    city_code: "12132"
-        "401":
+                    message: OK
+                    data:
+                      id: 2
+                      user_id: 1
+                      name: jkw
+                      phone: '081230908722'
+                      province: Jawa Tengah
+                      city_district: Solo
+                      postal_code: '57722'
+                      address: slo
+                      province_code: '33'
+                      city_code: '12132'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberAddress
     delete:
-      tags:
-      - Member | Address
       summary: Endpoint to delete address
       description: Used by a user to delete an address
-      operationId: v1UserAddressAddressIdDELETE
+      tags:
+        - Member | Address
+      security: []
       parameters:
-      - name: addressId
-        in: path
-        description: get addressId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/addressId'
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/deleted'
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: Page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberAddress
-  /admin/v1:
-    get:
-      tags:
-      - Admin | Profile
-      summary: Endpoint for get biodata by Id
-      description: Used by admin to view biodata
-      operationId: adminV1GET
-      responses:
-        "200":
-          description: Success updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/profiles'
-              example:
-                status: OK
-                data:
-                  email: user1@gmail.com
-                  phone: "081234567899"
-        "401":
-          description: Fail Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/401'
-        "403":
-          description: Fail Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/403'
-        "404":
-          description: page not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/404'
-        "500":
-          description: Error Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminProfile
-    put:
-      tags:
-      - Admin | Profile
-      summary: Endpoint for edit biodata
-      description: Used by admin to update biodata
-      operationId: adminV1PUT
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/profiles'
-            example:
-              password: abrakadabrahompimpa
-              phone: "081234567899"
-        required: false
-      responses:
-        "201":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/profiles'
-              example:
-                status: OK
-                data:
-                  password: abrakadabrahompimpa
-                  phone: "081234567899"
-        "401":
-          description: Fail Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/401'
-        "403":
-          description: Fail Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/403'
-        "404":
-          description: page not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/404'
-        "500":
-          description: Error Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminProfile
   /admin/v1/address:
     get:
-      tags:
-      - Admin | Address
       summary: Endpoint to view addresses
       description: Used by admin to see all addresses that have been added
-      operationId: adminV1AddressGET
+      tags:
+        - Admin | About
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
@@ -1015,59 +802,57 @@ paths:
                   id: 1
                   user_id: 1
                   name: abcdpetshop
-                  description: "jl.raya lt.2, depan rumah pak jkw"
+                  description: jl.raya lt.2, depan rumah pak jkw
                   province: Jawa Tengah
                   city: Solo
-                  postal_code: "57722"
-                  province_code: "33"
-                  city_code: "2333"
-        "401":
+                  postal_code: '57722'
+                  province_code: '33'
+                  city_code: '2333'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: Page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminAddress
     post:
-      tags:
-      - Admin | Address
       summary: Endpoint for add address
       description: Used by admin to add an address
-      operationId: adminV1AddressPOST
+      tags:
+        - Admin | About
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/about'
             example:
               name: abcdpetshop
-              description: "jl.raya lt.2, depan rumah pak jkw"
+              description: jl.raya lt.2, depan rumah pak jkw
               province: Jawa Tengah
               city: Solo
-              postal_code: "57722"
-              province_code: "33"
-              city_code: "2333"
-        required: true
+              postal_code: '57722'
+              province_code: '33'
+              city_code: '2333'
       responses:
-        "201":
+        '201':
           description: Success add address
           content:
             application/json:
@@ -1079,70 +864,60 @@ paths:
                   id: 1
                   user_id: 1
                   name: abcdpetshop
-                  description: "jl.raya lt.2, depan rumah pak jkw"
+                  description: jl.raya lt.2, depan rumah pak jkw
                   province: Jawa Tengah
                   city: Solo
-                  postal_code: "57722"
-                  province_code: "33"
-                  city_code: "2333"
-        "401":
+                  postal_code: '57722'
+                  province_code: '33'
+                  city_code: '2333'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminAddress
   /admin/v1/address/{addressId}:
     put:
-      tags:
-      - Admin | Address
       summary: Endpoint for updated address
       description: Used by admins to update an address
-      operationId: adminV1AddressAddressIdPUT
+      tags:
+        - Admin | About
       parameters:
-      - name: addressId
-        in: path
-        description: get addressId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/addressId'
       requestBody:
+        required: false
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/about'
             example:
               name: abcdpetshop
-              description: "jl.raya lt.2, depan rumah pak jkw"
+              description: jl.raya lt.2, depan rumah pak jkw
               province: Jawa Tengah
               city: Solo
-              postal_code: "57722"
-              province_code: "33"
-              city_code: "2333"
-        required: false
+              postal_code: '57722'
+              province_code: '33'
+              city_code: '2333'
       responses:
-        "201":
+        '201':
           description: Success updated address
           content:
             application/json:
@@ -1154,165 +929,193 @@ paths:
                   id: 1
                   user_id: 1
                   name: abcdpetshop
-                  description: "jl.raya lt.2, depan rumah pak jkw"
+                  description: jl.raya lt.2, depan rumah pak jkw
                   province: Jawa Tengah
                   city: Solo
-                  postal_code: "57722"
-                  province_code: "33"
-                  city_code: "2333"
-        "401":
+                  postal_code: '57722'
+                  province_code: '33'
+                  city_code: '2333'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminAddress
     delete:
-      tags:
-      - Admin | Address
       summary: Endpoint to delete address
       description: Used by admin to delete an address
-      operationId: adminV1AddressAddressIdDELETE
+      tags:
+        - Admin | About
       parameters:
-      - name: addressId
-        in: path
-        description: get addressId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/addressId'
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/deleted'
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: Page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminAddress
   /admin/v1/products:
     get:
-      tags:
-      - Admin | Product
       summary: Endpoint for get products
       description: Used by admins to see all products that have been added
-      operationId: adminV1ProductsGET
+      tags:
+        - Admin | Product
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/product_tags'
               example:
-                status: OK
+                message: OK
+                count: 5
+                page: 1
+                limit: 10
+                endIndex: 0
                 data:
-                  count: 6
-                  product:
-                  - id: 1
-                    product:
-                      id: 1
-                      name: kandang kucing
-                      description: warna merah
-                      weight: 2
-                      qty: 4
-                      price: 122121212
-                      sold: 4
-                      img: KHkaljhksjBKAJBS.jpeg
-                    tag_id:
+                  products:
+                    - id: 5
+                      product_id:
+                        id: 5
+                        name: vitamin c
+                        description: oke la
+                        qty: 18
+                        price: 25000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.28.jpeg?alt=media&token=e2df4196-4bf0-454c-9941-841d765a8947
+                        weight: 1
+                        sold: 8
+                      tags_id:
+                        - id: 5
+                          name: vitamin
+                    - id: 3
+                      product_id:
+                        id: 3
+                        name: kandang 4 tingkat
+                        description: paten3
+                        qty: 13
+                        price: 555000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29.jpeg?alt=media&token=89bc51e6-12e4-4584-ad94-54d856498a60
+                        weight: 4
+                        sold: 1
+                      tags_id:
+                        - id: 1
+                          name: kandang
                     - id: 1
-                      name: Kandang
-                    - id: 6
-                      name: Wadah
-                  - id: 2
-                    product:
-                      id: 2
-                      name: tas kucing
-                      description: warna merah
-                      weight: 1
-                      qty: 4
-                      price: 122121212
-                      sold: 1
-                      img: KHkaljhksjBKAJBS.jpeg
-                    tag_id:
+                      product_id:
+                        id: 1
+                        name: kandang 1 tingkat
+                        description: paten
+                        qty: 20
+                        price: 1000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                        weight: 1
+                        sold: 2
+                      tags_id:
+                        - id: 3
+                          name: dog food
+                        - id: 1
+                          name: kandang
+                        - id: 4
+                          name: toys
+                    - id: 4
+                      product_id:
+                        id: 4
+                        name: bola
+                        description: paten paten
+                        qty: 50
+                        price: 1500
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29%20(1).jpeg?alt=media&token=50ffdb25-416c-447b-b730-10fba579674c
+                        weight: 1
+                        sold: 6
+                      tags_id:
+                        - id: 4
+                          name: toys
                     - id: 2
-                      name: Tas
-                    - id: 7
-                      name: Tas Gendong
-        "401":
+                      product_id:
+                        id: 2
+                        name: kandang 2 tingkat
+                        description: paten2
+                        qty: 10
+                        price: 2000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30%20(1).jpeg?alt=media&token=708d4b3d-44e0-4fa0-8265-f41c0736afd7
+                        weight: 2
+                        sold: 0
+                      tags_id:
+                        - id: 1
+                          name: kandang
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminProduct
     post:
-      tags:
-      - Admin | Product
       summary: Endpoint for add new products
       description: Used by admin to add an item
-      operationId: adminV1ProductsPOST
+      tags:
+        - Admin | Product
       requestBody:
         description: Add new product
         content:
@@ -1320,126 +1123,101 @@ paths:
             schema:
               $ref: '#/components/schemas/products'
             example:
-              name: kandang kucing
-              description: warna merah
-              weight: 2
-              qty: 5
-              price: 122121212
-              img: KHkaljhksjBKAJBS.jpeg
-              tag_id:
-              - 1
-              - 2
-              - 3
+              name: kalung
+              description: Kalung dinosaurus
+              qty: '1000'
+              price: 123123
+              img: ajkhskdjhasd.jpeg
+              weight: 10
+              sold: 0
+              tags_id:
+                - 1
       responses:
-        "201":
+        '201':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/product_tags'
               example:
-                status: OK
+                message: Created
                 data:
-                  id: 1
-                  product:
-                    id: 1
-                    name: kandang kucing
-                    description: warna merah
-                    weight: 2
-                    qty: 5
-                    price: 122121212
-                    img: KHkaljhksjBKAJBS.jpeg
-                  tag_id:
-                  - id: 1
-                    name: Kandang
-                  - id: 2
-                    name: Kandang Kucing
-                  - id: 3
-                    name: Wadah
-        "401":
+                  id: 7
+                  product_id:
+                    id: 7
+                    name: kalung
+                    description: Kalung dinosaurus
+                    qty: 1000
+                    price: 123123
+                    img: ajkhskdjhasd.jpeg
+                    weight: 10
+                    sold: 0
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminProduct
   /admin/v1/products/{productId}:
     get:
-      tags:
-      - Admin | Product
       summary: Endpoint to get Products by Id
       description: Used by admin to view a products by Id product
-      operationId: adminV1ProductsProductIdGET
+      tags:
+        - Admin | Product
       parameters:
-      - name: productId
-        in: path
-        description: get productId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/productId'
       responses:
-        "200":
+        '200':
           description: SUCCESS
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/product_tags'
               example:
-                status: OK
+                message: Success
                 data:
                   id: 1
-                  product:
+                  product_id:
                     id: 1
-                    name: kandang kucing
-                    description: warna merah
-                    weight: 2
-                    qty: 4
-                    price: 122121212
-                    sold: 4
-                    img: KHkaljhksjBKAJBS.jpeg
-                  tag_id:
-                  - id: 1
-                    name: Kandang
-                  - id: 6
-                    name: Wadah
-      x-swagger-router-controller: AdminProduct
+                    name: kandang 1 tingkat
+                    description: paten
+                    qty: 20
+                    price: 1000
+                    img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                    weight: 1
+                    sold: 2
+                  tags_id:
+                    - id: 1
+                      name: kandang
+                    - id: 3
+                      name: dog food
+                    - id: 4
+                      name: toys
     put:
-      tags:
-      - Admin | Product
       summary: Endpoint for update product
       description: Used by admin to update an item
-      operationId: adminV1ProductsProductIdPUT
+      tags:
+        - Admin | Product
       parameters:
-      - name: productId
-        in: path
-        description: get productId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/productId'
       requestBody:
         description: update new product
         content:
@@ -1447,183 +1225,272 @@ paths:
             schema:
               $ref: '#/components/schemas/products'
             example:
-              name: kadang kucing bonus kalung
-              description: warna merah
-              weight: 2
-              qty: 5
-              price: 122121212
-              img: KHkaljhksjBKAJBS.jpeg
-              tag_id:
-              - 1
+              name: kalung
+              description: Kalung dinosaurus
+              qty: '1000'
+              price: 123123
+              img: ajkhskdjhasd.jpeg
+              weight: 10
+              sold: 0
+              tags_id:
+                - 1
       responses:
-        "201":
+        '201':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/product_tags'
               example:
-                status: OK
+                message: Created
                 data:
-                  id: 1
-                  product:
-                    id: 1
-                    name: kandang kucing bonus kalung
-                    description: warna merah
-                    weight: 2
-                    qty: 5
-                    price: 122121212
-                    img: KHkaljhksjBKAJBS.jpeg
-                  tag_id:
-                  - id: 1
-                    name: Kandang
-        "401":
+                  id: 7
+                  product_id:
+                    id: 7
+                    name: kalung
+                    description: Kalung dinosaurus
+                    qty: 1000
+                    price: 123123
+                    img: ajkhskdjhasd.jpeg
+                    weight: 10
+                    sold: 0
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminProduct
     delete:
-      tags:
-      - Admin | Product
       summary: Endpoint for delete product
       description: Used by admin to delete an item
-      operationId: adminV1ProductsProductIdDELETE
+      tags:
+        - Admin | Product
       parameters:
-      - name: productId
-        in: path
-        description: get productId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/productId'
       responses:
-        "200":
+        '200':
           description: SUCCESS
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/deleted'
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminProduct
   /admin/v1/supplies:
     get:
-      tags:
-      - Admin | Supplies
       summary: Endpoint to get all supplies
       description: Used by admin to view all supplies products
-      operationId: adminV1SuppliesGET
+      tags:
+        - Admin | Supplies
       responses:
-        "200":
+        '200':
           description: SUCCESS
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/supplies'
               example:
-                status: OK
                 data:
-                  count: 20
+                  count: 8
                   supplies:
-                  - id: 1
-                    product:
-                      id: 1
-                      name: kandang kucing
-                      description: warna merah
-                      weight: 2
-                      qty: 4
-                      price: 122121212
-                      sold: 4
-                      img: KHkaljhksjBKAJBS.jpeg
-                    qty: 10
-                    date: 10-11-2022
-                  - id: 2
-                    product:
-                      id: 2
-                      name: kandang semut
-                      description: warna merah
-                      weight: 10
+                    - id: 1
                       qty: 2
-                      price: 122121212
-                      sold: 4
-                      img: KHkaljhksjBKAJBS.jpeg
-                    qty: 110
-                    date: 10-11-2022
-        "401":
+                      createdAt: '2022-02-25T17:03:42.362Z'
+                      updatedAt: '2022-02-25T17:03:42.362Z'
+                      product_id: 1
+                      product:
+                        id: 1
+                        name: kandang 1 tingkat
+                        description: paten
+                        qty: 20
+                        price: 1000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                        weight: 1
+                        sold: 2
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-25T17:03:42.348Z'
+                    - id: 2
+                      qty: 3
+                      createdAt: '2022-02-25T17:03:42.362Z'
+                      updatedAt: '2022-02-25T17:03:42.362Z'
+                      product_id: 1
+                      product:
+                        id: 1
+                        name: kandang 1 tingkat
+                        description: paten
+                        qty: 20
+                        price: 1000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                        weight: 1
+                        sold: 2
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-25T17:03:42.348Z'
+                    - id: 3
+                      qty: 5
+                      createdAt: '2022-02-25T17:03:42.362Z'
+                      updatedAt: '2022-02-25T17:03:42.362Z'
+                      product_id: 1
+                      product:
+                        id: 1
+                        name: kandang 1 tingkat
+                        description: paten
+                        qty: 20
+                        price: 1000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                        weight: 1
+                        sold: 2
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-25T17:03:42.348Z'
+                    - id: 4
+                      qty: 10
+                      createdAt: '2022-02-25T17:03:42.362Z'
+                      updatedAt: '2022-02-25T17:03:42.362Z'
+                      product_id: 1
+                      product:
+                        id: 1
+                        name: kandang 1 tingkat
+                        description: paten
+                        qty: 20
+                        price: 1000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                        weight: 1
+                        sold: 2
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-25T17:03:42.348Z'
+                    - id: 5
+                      qty: 10
+                      createdAt: '2022-02-25T17:03:42.362Z'
+                      updatedAt: '2022-02-25T17:03:42.362Z'
+                      product_id: 2
+                      product:
+                        id: 2
+                        name: kandang 2 tingkat
+                        description: paten2
+                        qty: 10
+                        price: 2000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30%20(1).jpeg?alt=media&token=708d4b3d-44e0-4fa0-8265-f41c0736afd7
+                        weight: 2
+                        sold: 0
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-25T17:03:42.348Z'
+                    - id: 6
+                      qty: 20
+                      createdAt: '2022-02-25T17:03:42.362Z'
+                      updatedAt: '2022-02-25T17:03:42.362Z'
+                      product_id: 3
+                      product:
+                        id: 3
+                        name: kandang 4 tingkat
+                        description: paten3
+                        qty: 13
+                        price: 555000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29.jpeg?alt=media&token=89bc51e6-12e4-4584-ad94-54d856498a60
+                        weight: 4
+                        sold: 1
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-26T01:25:31.475Z'
+                    - id: 7
+                      qty: 15
+                      createdAt: '2022-02-25T17:03:42.362Z'
+                      updatedAt: '2022-02-25T17:03:42.362Z'
+                      product_id: 4
+                      product:
+                        id: 4
+                        name: bola
+                        description: paten paten
+                        qty: 50
+                        price: 1500
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29%20(1).jpeg?alt=media&token=50ffdb25-416c-447b-b730-10fba579674c
+                        weight: 1
+                        sold: 6
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-25T17:03:42.348Z'
+                    - id: 8
+                      qty: 9
+                      createdAt: '2022-02-25T17:03:42.362Z'
+                      updatedAt: '2022-02-25T17:03:42.362Z'
+                      product_id: 5
+                      product:
+                        id: 5
+                        name: vitamin c
+                        description: oke la
+                        qty: 18
+                        price: 25000
+                        img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.28.jpeg?alt=media&token=e2df4196-4bf0-454c-9941-841d765a8947
+                        weight: 1
+                        sold: 8
+                        createdAt: '2022-02-25T17:03:42.348Z'
+                        updatedAt: '2022-02-26T01:25:31.477Z'
+                message: Success
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminSupplies
     post:
-      tags:
-      - Admin | Supplies
       summary: Endpoint to add supplies product
       description: Used by admin to add new supplies products
-      operationId: adminV1SuppliesPOST
+      tags:
+        - Admin | Supplies
       requestBody:
         description: add new supplies
         content:
@@ -1634,7 +1501,7 @@ paths:
               product_id: 1
               qty: 20
       responses:
-        "201":
+        '201':
           description: SUCCESS
           content:
             application/json:
@@ -1655,50 +1522,40 @@ paths:
                     img: KHkaljhksjBKAJBS.jpeg
                   qty: 20
                   date: 22-12-2022
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminSupplies
   /admin/v1/supplies/{suppliesId}:
     get:
-      tags:
-      - Admin | Supplies
       summary: Endpoint to get Supplies product by Id
       description: Used by admin to view supplies product by Id
-      operationId: adminV1SuppliesSuppliesIdGET
+      tags:
+        - Admin | Supplies
       parameters:
-      - name: suppliesId
-        in: path
-        description: get suppliesId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/suppliesId'
       responses:
-        "200":
+        '200':
           description: SUCCESS
           content:
             application/json:
@@ -1719,47 +1576,37 @@ paths:
                     img: KHkaljhksjBKAJBS.jpeg
                   qty: 10
                   date: 22-12-2022
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminSupplies
     put:
-      tags:
-      - Admin | Supplies
       summary: Endpoint to edit supplies products
       description: Used by admin to update supplies products
-      operationId: adminV1SuppliesSuppliesIdPUT
+      tags:
+        - Admin | Supplies
       parameters:
-      - name: suppliesId
-        in: path
-        description: get suppliesId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/suppliesId'
       requestBody:
         description: Update supplies
         content:
@@ -1770,7 +1617,7 @@ paths:
               product_id: 1
               qty: 10
       responses:
-        "201":
+        '201':
           description: SUCCESS
           content:
             application/json:
@@ -1791,88 +1638,76 @@ paths:
                     img: KHkaljhksjBKAJBS.jpeg
                   qty: 10
                   date: 22-12-2022
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminSupplies
     delete:
-      tags:
-      - Admin | Supplies
       summary: Endpoint for delete supplies
       description: Used by admin to delete an item supplies
-      operationId: adminV1SuppliesSuppliesIdDELETE
+      tags:
+        - Admin | Supplies
       parameters:
-      - name: suppliesId
-        in: path
-        description: get suppliesId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/suppliesId'
       responses:
-        "200":
+        '200':
           description: SUCCESS
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/deleted'
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminSupplies
   /admin/v1/tags:
     get:
-      tags:
-      - Admin | Tags
       summary: Endpoint for get tags
       description: Used by admin to view tags
-      operationId: adminV1TagsGET
+      tags:
+        - Admin | Tags
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
@@ -1883,37 +1718,35 @@ paths:
                 data:
                   count: 6
                   tags:
-                  - id: 1
-                    name: Kandang
-                  - id: 2
-                    name: Tas
-                  - id: 3
-                    name: Pasir
-        "401":
+                    - id: 1
+                      name: Kandang
+                    - id: 2
+                      name: Tas
+                    - id: 3
+                      name: Pasir
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminTags
     post:
-      tags:
-      - Admin | Tags
       summary: Endpoint for add new tags
       description: Used by admin to create new tags
-      operationId: adminV1TagsPOST
+      tags:
+        - Admin | Tags
       requestBody:
         description: Create new tags
         content:
@@ -1923,7 +1756,7 @@ paths:
             example:
               name: Kandang
       responses:
-        "201":
+        '201':
           description: Success
           content:
             application/json:
@@ -1934,145 +1767,213 @@ paths:
                 data:
                   id: 1
                   name: Kandang
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminTags
   /admin/v1/tags/{tagsId}:
-    delete:
+    put:
+      summary: Endpoint to update tags
+      description: Used by admin to update name tags
+      parameters:
+        - $ref: '#/components/parameters/tagsId'
       tags:
-      - Admin | Tags
+        - Admin | Tags
+      requestBody:
+        description: Success
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/tags'
+            example:
+              status: OK
+              data:
+                name: Kandang Buaya
+      responses:
+        '201':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tags'
+              example:
+                status: OK
+                data:
+                  id: 1
+                  name: Kandang Buaya
+    delete:
       summary: Endpoint for delete tags
       description: Used by admin to delete an item tags
-      operationId: adminV1TagsTagsIdDELETE
+      tags:
+        - Admin | Tags
       parameters:
-      - name: tagsId
-        in: path
-        description: get tagsId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - $ref: '#/components/parameters/tagsId'
       responses:
-        "200":
+        '200':
           description: SUCCESS
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/deleted'
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminTags
   /admin/v1/adopt:
     get:
-      tags:
-      - Admin | Adopt
       summary: Endpoint for get all adopt
       description: Used by admins to see all adoptions that have been added
-      operationId: adminV1AdoptGET
+      tags:
+        - Admin | Adopt
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/animal_adoptions'
               example:
-                status: OK
+                message: OK
+                count: 5
+                page: 1
+                limit: 10
+                endIndex: 0
                 data:
-                  count: 6
-                  adopt:
-                  - id: 1
-                    name: kucing oren
-                    img: kucing.jpeg
-                    age: 20
-                    animal_race: anggora
-                    category:
-                      id: 1
-                      name: Kucing
-                  - id: 2
-                    name: kucing gareng
-                    img: kucing.jpeg
-                    age: 20
-                    animal_race: anggora
-                    category:
-                      id: 1
-                      name: Kucing
-        "401":
+                  all_adopt:
+                    - id: 1
+                      name: kodomo
+                      img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/42850759048.jpg?alt=media&token=c74e1477-9bba-4205-823e-b90370ec6d97
+                      age: 1
+                      animal_race: reptil
+                      categoryId: 1
+                      createdAt: '2022-02-25T17:03:42.378Z'
+                      updatedAt: '2022-02-25T17:03:42.378Z'
+                      category:
+                        id: 1
+                        name: reptil
+                        createdAt: '2022-02-25T17:03:42.375Z'
+                        updatedAt: '2022-02-25T17:03:42.375Z'
+                    - id: 2
+                      name: bunglon
+                      img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/47503862164.jpg?alt=media&token=916800e2-5857-42d4-8220-bfb8a6cc8baa
+                      age: 2
+                      animal_race: reptil
+                      categoryId: 1
+                      createdAt: '2022-02-25T17:03:42.378Z'
+                      updatedAt: '2022-02-25T17:03:42.378Z'
+                      category:
+                        id: 1
+                        name: reptil
+                        createdAt: '2022-02-25T17:03:42.375Z'
+                        updatedAt: '2022-02-25T17:03:42.375Z'
+                    - id: 3
+                      name: merak
+                      img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/47543667177.jpeg?alt=media&token=fe5fd23a-185f-40f9-9cb7-e38e1a5003cf
+                      age: 3
+                      animal_race: burung
+                      categoryId: 4
+                      createdAt: '2022-02-25T17:03:42.378Z'
+                      updatedAt: '2022-02-25T17:03:42.378Z'
+                      category:
+                        id: 4
+                        name: eksotis
+                        createdAt: '2022-02-25T17:03:42.375Z'
+                        updatedAt: '2022-02-25T17:03:42.375Z'
+                    - id: 4
+                      name: pikachu
+                      img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/488377990.jpg?alt=media&token=dfe3d9b1-9843-4424-872a-a8a79cddd1ac
+                      age: 1
+                      animal_race: rare
+                      categoryId: 2
+                      createdAt: '2022-02-25T17:03:42.378Z'
+                      updatedAt: '2022-02-25T17:03:42.378Z'
+                      category:
+                        id: 2
+                        name: mamalia
+                        createdAt: '2022-02-25T17:03:42.375Z'
+                        updatedAt: '2022-02-25T17:03:42.375Z'
+                    - id: 5
+                      name: dinosaur
+                      img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/64781083534.jpg?alt=media&token=bdae65fd-528e-49dd-a552-b1b7e512bdd9
+                      age: 10
+                      animal_race: reptil
+                      categoryId: 3
+                      createdAt: '2022-02-25T17:03:42.378Z'
+                      updatedAt: '2022-02-25T17:03:42.378Z'
+                      category:
+                        id: 3
+                        name: purba
+                        createdAt: '2022-02-25T17:03:42.375Z'
+                        updatedAt: '2022-02-25T17:03:42.375Z'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminAdopt
     post:
-      tags:
-      - Admin | Adopt
       summary: Endpoint for add new animal adopt
       description: Used by admin to add new adoption
-      operationId: adminV1AdoptPOST
+      tags:
+        - Admin | Adopt
       requestBody:
         description: Add new product
         content:
@@ -2080,106 +1981,91 @@ paths:
             schema:
               $ref: '#/components/schemas/animal_adoptions'
             example:
-              name: kucing oren
-              img: kucing.jpeg
-              age: 20
-              animal_race: anggora
+              name: dinosaurus
+              img: asdasdasd.jpg
+              age: 10
+              animal_race: reptil
               categoryId: 1
       responses:
-        "201":
+        '201':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/animal_adoptions'
               example:
-                status: OK
+                message: Created
                 data:
-                  id: 1
-                  name: kucing oren
-                  img: kucing.jpeg
-                  age: 20
-                  animal_race: anggora
-                  category:
-                    id: 1
-                    name: Kucing
-        "401":
+                  id: 7
+                  name: dinosaurus
+                  img: asdasdasd.jpg
+                  age: 10
+                  animal_race: reptil
+                  categoryId: 1
+                  updatedAt: '2022-02-26T03:03:20.781Z'
+                  createdAt: '2022-02-26T03:03:20.781Z'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminAdopt
   /admin/v1/adopt/{adoptId}:
     get:
-      tags:
-      - Admin | Adopt
       summary: Endpoint to get animal adopts by Id
       description: Used by admin to view animal adoption by Id
-      operationId: adminV1AdoptAdoptIdGET
+      tags:
+        - Admin | Adopt
       parameters:
-      - name: adoptId
-        in: path
-        description: get adoptId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/adoptId'
       responses:
-        "200":
+        '200':
           description: SUCCESS
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/animal_adoptions'
               example:
-                status: OK
+                message: Success
                 data:
                   id: 1
-                  name: kucing oren
-                  img: kucing.jpeg
-                  age: 20
-                  animal_race: anggora
+                  name: kodomo
+                  img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/42850759048.jpg?alt=media&token=c74e1477-9bba-4205-823e-b90370ec6d97
+                  age: 1
+                  animal_race: reptil
+                  categoryId: 1
+                  createdAt: '2022-02-25T17:03:42.378Z'
+                  updatedAt: '2022-02-25T17:03:42.378Z'
                   category:
                     id: 1
-                    name: Kucing
-      x-swagger-router-controller: AdminAdopt
+                    name: reptil
+                    createdAt: '2022-02-25T17:03:42.375Z'
+                    updatedAt: '2022-02-25T17:03:42.375Z'
     put:
-      tags:
-      - Admin | Adopt
       summary: Endpoint for update animal adopt
       description: Used by admins to update adopted animals
-      operationId: adminV1AdoptAdoptIdPUT
+      tags:
+        - Admin | Adopt
       parameters:
-      - name: adoptId
-        in: path
-        description: get adoptId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/adoptId'
       requestBody:
         description: update new adopt
         content:
@@ -2187,151 +2073,97 @@ paths:
             schema:
               $ref: '#/components/schemas/animal_adoptions'
             example:
-              name: kucing oyen
-              img: kucing.jpeg
-              age: 20
-              animal_race: anggora
-              category_id: 1
+              name: dinosaurus
+              img: asdasdasd.jpg
+              age: 10
+              animal_race: reptil
+              categoryId: 1
       responses:
-        "201":
+        '201':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/animal_adoptions'
               example:
-                status: OK
+                message: Created
                 data:
-                  id: 1
-                  name: kucing oyen
-                  img: kucing.jpeg
-                  age: 20
-                  animal_race: anggora
-                  category_id: 1
-        "401":
+                  id: 7
+                  name: dinosaurus
+                  img: asdasdasd.jpg
+                  age: 10
+                  animal_race: reptil
+                  categoryId: 1
+                  updatedAt: '2022-02-26T03:03:20.781Z'
+                  createdAt: '2022-02-26T03:03:20.781Z'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminAdopt
     delete:
-      tags:
-      - Admin | Adopt
       summary: Endpoint for delete animal adopt
-      description: Used by admins to remove adopted animalsUsed by admins to remove
-        adopted animals
-      operationId: adminV1AdoptAdoptIdDELETE
+      description: Used by admins to remove adopted animalsUsed by admins to remove adopted animals
+      tags:
+        - Admin | Adopt
       parameters:
-      - name: adoptId
-        in: path
-        description: get adoptId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/adoptId'
       responses:
-        "200":
+        '200':
           description: SUCCESS
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/deleted'
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminAdopt
-  /admin/v1/category:
-    get:
-      tags:
-      - Admin | Category
-      summary: Endpoint for get categories
-      description: Used by admin to view categories
-      operationId: adminV1CategoryGET
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/categories'
-              example:
-                status: OK
-                data:
-                  count: 6
-                  category:
-                  - id: 1
-                    name: Kucing
-                  - id: 2
-                    name: Kadal
-                  - id: 3
-                    name: Buaya
-        "401":
-          description: Fail Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/401'
-        "403":
-          description: Fail Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/403'
-        "500":
-          description: Error Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminCategory
+  /admin/v1/categories:
     post:
-      tags:
-      - Admin | Category
       summary: Endpoint for add new categories
       description: Used by admin to create new categories
-      operationId: adminV1CategoryPOST
+      tags:
+        - Admin | Category
       requestBody:
         description: Create new category
         content:
@@ -2341,7 +2173,7 @@ paths:
             example:
               name: Kadal
       responses:
-        "201":
+        '201':
           description: Success
           content:
             application/json:
@@ -2352,47 +2184,77 @@ paths:
                 data:
                   id: 1
                   name: Kadal
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminCategory
-  /admin/v1/category/{categoryId}:
-    put:
+  /admin/v1/categories/{categoryId}:
+    get:
+      summary: Endpoint for get categories
+      description: Used by admin to view categories
       tags:
-      - Admin | Category
+        - Admin | Category
+      parameters:
+        - $ref: '#/components/parameters/categoryId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/categories'
+              example:
+                message: Success
+                data:
+                  id: 1
+                  name: reptil
+                  createdAt: '2022-02-25T17:03:42.375Z'
+                  updatedAt: '2022-02-25T17:03:42.375Z'
+        '401':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401'
+        '403':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403'
+        '500':
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+    put:
       summary: Endpoint to update a categories
       description: Used by admin to update categories
-      operationId: adminV1CategoryCategoryIdPUT
+      tags:
+        - Admin | Category
       parameters:
-      - name: categoryId
-        in: path
-        description: get categoryId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - $ref: '#/components/parameters/categoryId'
       requestBody:
         description: Update a categories
         content:
@@ -2402,7 +2264,7 @@ paths:
             example:
               name: Kucing Anggora
       responses:
-        "201":
+        '201':
           description: Success
           content:
             application/json:
@@ -2413,102 +2275,145 @@ paths:
                 data:
                   id: 1
                   name: Kucing Anggora
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminCategory
     delete:
-      tags:
-      - Admin | Category
       summary: Endpoint for delete categories
       description: Used by admin to delete an item categories
-      operationId: adminV1CategoryCategoryIdDELETE
+      tags:
+        - Admin | Category
       parameters:
-      - name: categoryId
-        in: path
-        description: get categoryId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - $ref: '#/components/parameters/categoryId'
       responses:
-        "200":
+        '200':
           description: SUCCESS
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/deleted'
-        "401":
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      x-swagger-router-controller: AdminCategory
-  /v1/user/orders:
-    get:
+  /v1/user/order/create:
+    post:
+      summary: Endpoint get all user orders
+      description: Used by users to add orders
       tags:
-      - Member | Orders
+        - Member | Orders
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/access_token'
+      requestBody:
+        description: Add new order
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order_products'
+            example:
+              address_id: 2
+              shipping_costs: 25000
+      responses:
+        '201':
+          description: Success get all orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order_products'
+              example:
+                message: Success
+                data:
+                  order:
+                    id: 3
+                    user_id: XSgo6cGNR8XhpKDbmmbfi3lYe1e2
+                    address_id: 2
+                    shipping_costs: 25000
+                    grand_total: 1185000
+                    grand_weight: 10
+                    status: PENDING
+                    updatedAt: '2022-02-26T01:25:31.958Z'
+                    createdAt: '2022-02-26T01:25:31.503Z'
+                    resi: ''
+                    midtrans_order_id: 20220226qy3b96fZto5dZCw1VMC6Hsnm
+                    midtrans_snap_token: e3e965e1-7caf-468f-ac86-e87a60660a59
+                  snap_token: e3e965e1-7caf-468f-ac86-e87a60660a59
+        '401':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401'
+        '403':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403'
+        '404':
+          description: page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        '500':
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+  /v1/user/order:
+    get:
       summary: Endpoint get all orders
       description: Used by users to view all item transactions
-      operationId: v1UserOrdersGET
+      tags:
+        - Member | Orders
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
+        - $ref: '#/components/parameters/access_token'
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
@@ -2517,65 +2422,50 @@ paths:
               example:
                 status: OK
                 data:
-                - id: 1
-                  product:
-                    id: 1
-                    name: kandang burung
-                    description: murah bangettt
-                    qty: 5
-                    price: 122121212
-                    img: KHkaljhksjBKAJBS.jpeg
-                  order_id: 1
-                  qty: 3
-                  sub_weight: 2
-                  sub_total: "30.000"
-                - id: 2
-                  product:
-                    id: 2
-                    name: kandang jangkrik
-                    description: oren gembul
+                  - id: 1
+                    product:
+                      id: 1
+                      name: kandang burung
+                      description: murah bangettt
+                      qty: 5
+                      price: 122121212
+                      img: KHkaljhksjBKAJBS.jpeg
+                    order_id: 1
                     qty: 3
-                    price: 1111111
-                    img: KHkaljhksjBKAJBS.jpeg
-                  order_id: 2
-                  qty: 3
-                  sub_weight: 1
-                  sub_total: "50.000"
-        "404":
+                    sub_weight: 2
+                    sub_total: '30.000'
+                  - id: 2
+                    product:
+                      id: 2
+                      name: kandang jangkrik
+                      description: oren gembul
+                      qty: 3
+                      price: 1111111
+                      img: KHkaljhksjBKAJBS.jpeg
+                    order_id: 2
+                    qty: 3
+                    sub_weight: 1
+                    sub_total: '50.000'
+        '404':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
-      security: []
-      x-swagger-router-controller: MemberOrders
     post:
-      tags:
-      - Member | Orders
       summary: Endpoint get all user orders
       description: Used by users to add orders
-      operationId: v1UserOrdersPOST
+      tags:
+        - Member | Orders
+      security: []
       parameters:
-      - name: Authorization
-        in: header
-        description: member access
-        required: true
-        style: simple
-        explode: false
-        schema:
-          required:
-          - Authorization
-          type: string
-          properties:
-            Authorization:
-              type: string
-              example: tokenrahasia
+        - $ref: '#/components/parameters/access_token'
       requestBody:
         description: Add new order
         content:
@@ -2586,9 +2476,9 @@ paths:
               product_id: 1
               qty: 3
               sub_weight: 3
-              sub_total: "30.000"
+              sub_total: '30.000'
       responses:
-        "201":
+        '201':
           description: Success get all orders
           content:
             application/json:
@@ -2602,76 +2492,144 @@ paths:
                   order_id: 1
                   qty: 3
                   sub_weight: 3
-                  sub_total: "30.000"
-        "401":
+                  sub_total: '30.000'
+        '401':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/401'
-        "403":
+        '403':
           description: Fail Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/403'
-        "404":
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-        "500":
+        '500':
           description: Error Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/500'
+  /v1/user/order/{orderId}:
+    get:
+      summary: Endpoint to get Order by Id
+      description: used by User to view spesifik order
       security: []
-      x-swagger-router-controller: MemberOrders
+      parameters:
+        - $ref: '#/components/parameters/access_token'
+        - $ref: '#/components/parameters/orderId'
+      tags:
+        - Member | Orders
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orders'
+              example:
+                status: OK
+                data:
+                  id: 1
+                  user_id: 1
+                  address_id: 1
+                  midtrans_id: JAKNSDUABSDIKnoaisndkansdOLJKNOI
+                  snap_token: asdasdkln
+                  resi: asdksndkanskd
+                  shipping_cost: 132135
+                  grand_weight: 8
+                  grand_total: 23232
+                  status: FINISHED
+                  date: 22 feb 2022
+        '401':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401'
+        '403':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403'
+        '404':
+          description: page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        '500':
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+    put:
+      summary: Endpoint to update status orders
+      description: Used by user update stautus to finish
+      parameters:
+        - $ref: '#/components/parameters/orderId'
+      responses:
+        '201':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orders'
+              example:
+                message: Created
+                data: Order accepted!
   /products:
     get:
-      tags:
-      - Users Activity
       summary: Endpoint for get all products
       description: Used by all users to view products
-      operationId: productsGET
+      tags:
+        - Users Activity
+      security: []
       parameters:
-      - name: min_price
-        in: query
-        description: price filters
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          default: "0"
-      - name: max_price
-        in: query
-        description: price filters
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: title
-        in: query
-        description: title filters
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: tags
-        in: query
-        description: tags filters
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: min_price
+          in: query
+          description: price filters
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+            default: '0'
+        - name: max_price
+          in: query
+          description: price filters
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: title
+          in: query
+          description: title filters
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: tags
+          in: query
+          description: tags filters
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
@@ -2681,491 +2639,1173 @@ paths:
                 PRODUCTS:
                   description: get products data
                   value:
-                    status: OK
+                    message: OK
+                    count: 5
+                    page: 1
+                    limit: 10
+                    endIndex: 0
                     data:
-                      count: 6
                       products:
-                      - id: 1
-                        product:
-                          id: 1
-                          name: kandang burung
-                          description: murah bangettt
-                          weight: 1
-                          qty: 5
-                          price: 122121212
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
                         - id: 1
-                          name: Kandang
-                      - id: 2
-                        product:
-                          id: 2
-                          name: kandang jangkrik
-                          description: tahan panas
-                          weight: 1
-                          qty: 3
-                          price: 1111111
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: Kandang
-                      - id: 3
-                        product:
-                          id: 3
-                          name: kandang buaya
-                          description: tahan banting
-                          weight: 1
-                          price: 222222222
-                          qty: 3
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: Kandang
+                          product_id:
+                            id: 1
+                            name: kandang 1 tingkat
+                            description: paten
+                            qty: 20
+                            price: 1000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                            weight: 1
+                            sold: 2
+                          tags_id:
+                            - id: 1
+                              name: kandang
+                            - id: 3
+                              name: dog food
+                            - id: 4
+                              name: toys
+                        - id: 2
+                          product_id:
+                            id: 2
+                            name: kandang 2 tingkat
+                            description: paten2
+                            qty: 10
+                            price: 2000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30%20(1).jpeg?alt=media&token=708d4b3d-44e0-4fa0-8265-f41c0736afd7
+                            weight: 2
+                            sold: 0
+                          tags_id:
+                            - id: 1
+                              name: kandang
+                        - id: 3
+                          product_id:
+                            id: 3
+                            name: kandang 4 tingkat
+                            description: paten3
+                            qty: 15
+                            price: 555000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29.jpeg?alt=media&token=89bc51e6-12e4-4584-ad94-54d856498a60
+                            weight: 4
+                            sold: 1
+                          tags_id:
+                            - id: 1
+                              name: kandang
+                        - id: 4
+                          product_id:
+                            id: 4
+                            name: bola
+                            description: paten paten
+                            qty: 50
+                            price: 1500
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29%20(1).jpeg?alt=media&token=50ffdb25-416c-447b-b730-10fba579674c
+                            weight: 1
+                            sold: 6
+                          tags_id:
+                            - id: 4
+                              name: toys
+                        - id: 5
+                          product_id:
+                            id: 5
+                            name: vitamin c
+                            description: oke la
+                            qty: 20
+                            price: 25000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.28.jpeg?alt=media&token=e2df4196-4bf0-454c-9941-841d765a8947
+                            weight: 1
+                            sold: 8
+                          tags_id:
+                            - id: 5
+                              name: vitamin
                 MIN_PRICE:
-                  description: Get data products by min_price example 100000
+                  description: Get data products by min_price example 1500
                   value:
-                    status: OK
+                    message: OK
+                    count: 3
+                    page: 1
+                    limit: 10
+                    endIndex: 0
                     data:
-                      count: 6
                       products:
-                      - id: 1
-                        product:
-                          id: 1
-                          name: kandang burung
-                          description: murah bangettt
-                          weight: 1
-                          qty: 5
-                          price: 200000
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: Kandang
-                      - id: 2
-                        product:
-                          id: 2
-                          name: kandang jangkrik
-                          description: tahan panas
-                          weight: 1
-                          qty: 3
-                          price: 300000
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: Kandang
-                      - id: 3
-                        product:
-                          id: 3
-                          name: kandang buaya
-                          description: tahan banting
-                          weight: 1
-                          price: 150000
-                          qty: 3
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: Kandang
+                        - id: 2
+                          product_id:
+                            id: 2
+                            name: kandang 2 tingkat
+                            description: paten2
+                            qty: 10
+                            price: 2000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30%20(1).jpeg?alt=media&token=708d4b3d-44e0-4fa0-8265-f41c0736afd7
+                            weight: 2
+                            sold: 0
+                          tags_id:
+                            - id: 1
+                              name: kandang
+                        - id: 3
+                          product_id:
+                            id: 3
+                            name: kandang 4 tingkat
+                            description: paten3
+                            qty: 15
+                            price: 555000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29.jpeg?alt=media&token=89bc51e6-12e4-4584-ad94-54d856498a60
+                            weight: 4
+                            sold: 1
+                          tags_id:
+                            - id: 1
+                              name: kandang
+                        - id: 5
+                          product_id:
+                            id: 5
+                            name: vitamin c
+                            description: oke la
+                            qty: 20
+                            price: 25000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.28.jpeg?alt=media&token=e2df4196-4bf0-454c-9941-841d765a8947
+                            weight: 1
+                            sold: 8
+                          tags_id:
+                            - id: 5
+                              name: vitamin
                 MAX_PRICE:
-                  description: Get data product by max_price example 100000
+                  description: Get data product by max_price example 1500
                   value:
-                    status: OK
+                    message: OK
+                    count: 1
+                    page: 1
+                    limit: 10
+                    endIndex: 0
                     data:
-                      count: 6
                       products:
-                      - id: 1
-                        product:
-                          id: 1
-                          name: kandang burung
-                          description: murah bangettt
-                          weight: 1
-                          qty: 5
-                          price: 30000
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
                         - id: 1
-                          name: Kandang
-                      - id: 2
-                        product:
-                          id: 2
-                          name: kandang jangkrik
-                          description: tahan panas
-                          weight: 1
-                          qty: 3
-                          price: 99000
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: Kandang
-                      - id: 3
-                        product:
-                          id: 3
-                          name: kandang buaya
-                          description: tahan banting
-                          weight: 1
-                          price: 80000
-                          qty: 3
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: Kandang
+                          product_id:
+                            id: 1
+                            name: kandang 1 tingkat
+                            description: paten
+                            qty: 20
+                            price: 1000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                            weight: 1
+                            sold: 2
+                          tags_id:
+                            - id: 1
+                              name: kandang
+                            - id: 3
+                              name: dog food
+                            - id: 4
+                              name: toys
                 TITLE:
-                  description: Get data product by title example Pasir
+                  description: Get data product by title example Kandang
                   value:
-                    status: OK
+                    message: OK
+                    count: 3
+                    page: 1
+                    limit: 10
+                    endIndex: 0
                     data:
-                      count: 6
                       products:
-                      - id: 1
-                        product:
-                          id: 1
-                          name: Pasir Pantai original
-                          description: barang dijamin ori
-                          weight: 1
-                          qty: 5
-                          price: 1000000
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
                         - id: 1
-                          name: Pasir
-                      - id: 2
-                        product:
-                          id: 5
-                          name: Pasir lereng gunung Merapi
-                          description: barang original
-                          weight: 1
-                          qty: 3
-                          price: 99000
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: Pasir
+                          product_id:
+                            id: 1
+                            name: kandang 1 tingkat
+                            description: paten
+                            qty: 20
+                            price: 1000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                            weight: 1
+                            sold: 2
+                          tags_id:
+                            - id: 1
+                              name: kandang
+                            - id: 3
+                              name: dog food
+                            - id: 4
+                              name: toys
+                        - id: 2
+                          product_id:
+                            id: 2
+                            name: kandang 2 tingkat
+                            description: paten2
+                            qty: 10
+                            price: 2000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30%20(1).jpeg?alt=media&token=708d4b3d-44e0-4fa0-8265-f41c0736afd7
+                            weight: 2
+                            sold: 0
+                          tags_id:
+                            - id: 1
+                              name: kandang
+                        - id: 3
+                          product_id:
+                            id: 3
+                            name: kandang 4 tingkat
+                            description: paten3
+                            qty: 15
+                            price: 555000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29.jpeg?alt=media&token=89bc51e6-12e4-4584-ad94-54d856498a60
+                            weight: 4
+                            sold: 1
+                          tags_id:
+                            - id: 1
+                              name: kandang
                 TAGS:
-                  description: Get data product by Tags example kandang
+                  description: Get data product by Tags example toys
                   value:
-                    status: OK
+                    message: OK
+                    count: 2
+                    page: 1
+                    limit: 10
+                    endIndex: 0
                     data:
-                      count: 6
                       products:
-                      - id: 1
-                        product:
-                          id: 1
-                          name: kandang burung
-                          description: murah bangettt
-                          weight: 1
-                          qty: 5
-                          price: 30000
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
                         - id: 1
-                          name: kandang
-                      - id: 2
-                        product:
-                          id: 2
-                          name: kandang jangkrik
-                          description: tahan panas
-                          weight: 1
-                          qty: 3
-                          price: 200000
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: kandang
-                      - id: 3
-                        product:
-                          id: 3
-                          name: kandang buaya
-                          description: tahan banting
-                          weight: 1
-                          qty: 3
-                          price: 80000
-                          img: KHkaljhksjBKAJBS.jpeg
-                          sold: 0
-                        tag_id:
-                        - id: 1
-                          name: kandang
-      security: []
-      x-swagger-router-controller: UsersActivity
+                          product_id:
+                            id: 1
+                            name: kandang 1 tingkat
+                            description: paten
+                            qty: 20
+                            price: 1000
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                            weight: 1
+                            sold: 2
+                          tags_id:
+                            - id: 4
+                              name: toys
+                        - id: 4
+                          product_id:
+                            id: 4
+                            name: bola
+                            description: paten paten
+                            qty: 50
+                            price: 1500
+                            img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29%20(1).jpeg?alt=media&token=50ffdb25-416c-447b-b730-10fba579674c
+                            weight: 1
+                            sold: 6
+                          tags_id:
+                            - id: 4
+                              name: toys
   /products/{productId}:
     get:
-      tags:
-      - Users Activity
       summary: Endpoint to get product by Id
       description: Used by all users to view details of a product
-      operationId: productsProductIdGET
+      tags:
+        - Users Activity
+      security: []
       parameters:
-      - name: productId
-        in: path
-        description: get productId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
+        - $ref: '#/components/parameters/productId'
       responses:
-        "200":
+        '200':
           description: Success get product by Id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_1'
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
               example:
-                status: OK
                 data:
                   id: 1
-                  name: kandang burung
-                  description: murah bangettt
-                  weight: 1
-                  qty: 5
-                  price: 122121212
-                  img: KHkaljhksjBKAJBS.jpeg
-                  sold: 3
-        "404":
+                  product_id:
+                    id: 1
+                    name: kandang 1 tingkat
+                    description: paten
+                    qty: 20
+                    price: 1000
+                    img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.30.jpeg?alt=media&token=120f0ea3-597e-4f5b-aa2c-e9bbea9d1b1d
+                    weight: 1
+                    sold: 2
+                  tags_id:
+                    - id: 1
+                      name: kandang
+                    - id: 3
+                      name: dog food
+                    - id: 4
+                      name: toys
+                message: Success
+        '404':
           description: page not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/404'
-      security: []
-      x-swagger-router-controller: UsersActivity
   /tags:
     get:
-      tags:
-      - Users Activity
       summary: Endpoint to view tags
-      description: Used by all users to view details of a Used by all users to view
-        a tags
-      operationId: tagsGET
+      description: Used by all users to view details of a Used by all users to view a tags
+      tags:
+        - Users Activity
+      security: []
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/tags'
               example:
-                status: OK
+                message: Success
                 data:
-                  count: 6
-                  tags:
                   - id: 1
-                    name: Tas
+                    name: kandang
                   - id: 2
-                    name: Pasir
+                    name: cat food
                   - id: 3
-                    name: Kandang
-      security: []
-      x-swagger-router-controller: UsersActivity
-  /adopts:
+                    name: dog food
+                  - id: 4
+                    name: toys
+                  - id: 5
+                    name: vitamin
+  /adopt:
     get:
-      tags:
-      - Users Activity
       summary: Endpoint for get all animal adopt
       description: Used by all users to view all adopted animal
-      operationId: adoptsGET
+      tags:
+        - Users Activity
+      security: []
       parameters:
-      - name: title
-        in: query
-        description: title filters
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: category
-        in: query
-        description: category filters
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: title
+          in: query
+          description: title filters
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: category filters
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_2'
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/animal_adoptions'
               examples:
+                ADOPTS:
+                  description: get all adopts
+                  value:
+                    message: OK
+                    count: 5
+                    page: 1
+                    limit: 10
+                    endIndex: 0
+                    data:
+                      all_adopt:
+                        - id: 1
+                          name: kodomo
+                          img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/42850759048.jpg?alt=media&token=c74e1477-9bba-4205-823e-b90370ec6d97
+                          age: 1
+                          animal_race: reptil
+                          categoryId: 1
+                          createdAt: '2022-02-25T17:03:42.378Z'
+                          updatedAt: '2022-02-25T17:03:42.378Z'
+                          category:
+                            id: 1
+                            name: reptil
+                            createdAt: '2022-02-25T17:03:42.375Z'
+                            updatedAt: '2022-02-25T17:03:42.375Z'
+                        - id: 2
+                          name: bunglon
+                          img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/47503862164.jpg?alt=media&token=916800e2-5857-42d4-8220-bfb8a6cc8baa
+                          age: 2
+                          animal_race: reptil
+                          categoryId: 1
+                          createdAt: '2022-02-25T17:03:42.378Z'
+                          updatedAt: '2022-02-25T17:03:42.378Z'
+                          category:
+                            id: 1
+                            name: reptil
+                            createdAt: '2022-02-25T17:03:42.375Z'
+                            updatedAt: '2022-02-25T17:03:42.375Z'
+                        - id: 3
+                          name: merak
+                          img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/47543667177.jpeg?alt=media&token=fe5fd23a-185f-40f9-9cb7-e38e1a5003cf
+                          age: 3
+                          animal_race: burung
+                          categoryId: 4
+                          createdAt: '2022-02-25T17:03:42.378Z'
+                          updatedAt: '2022-02-25T17:03:42.378Z'
+                          category:
+                            id: 4
+                            name: eksotis
+                            createdAt: '2022-02-25T17:03:42.375Z'
+                            updatedAt: '2022-02-25T17:03:42.375Z'
+                        - id: 4
+                          name: pikachu
+                          img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/488377990.jpg?alt=media&token=dfe3d9b1-9843-4424-872a-a8a79cddd1ac
+                          age: 1
+                          animal_race: rare
+                          categoryId: 2
+                          createdAt: '2022-02-25T17:03:42.378Z'
+                          updatedAt: '2022-02-25T17:03:42.378Z'
+                          category:
+                            id: 2
+                            name: mamalia
+                            createdAt: '2022-02-25T17:03:42.375Z'
+                            updatedAt: '2022-02-25T17:03:42.375Z'
+                        - id: 5
+                          name: dinosaur
+                          img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/64781083534.jpg?alt=media&token=bdae65fd-528e-49dd-a552-b1b7e512bdd9
+                          age: 10
+                          animal_race: reptil
+                          categoryId: 3
+                          createdAt: '2022-02-25T17:03:42.378Z'
+                          updatedAt: '2022-02-25T17:03:42.378Z'
+                          category:
+                            id: 3
+                            name: purba
+                            createdAt: '2022-02-25T17:03:42.375Z'
+                            updatedAt: '2022-02-25T17:03:42.375Z'
                 TITLE:
-                  description: Get data product by title example Kucing
+                  description: Get data product by title example Kodomo
                   value:
-                    status: OK
+                    message: OK
+                    count: 1
+                    page: 1
+                    limit: 10
+                    endIndex: 0
                     data:
-                      count: 6
-                      adopts:
-                      - id: 1
-                        name: Kucing Persia
-                        description: warna oren
-                        qty: 5
-                        price: 1000000
-                        img: KHkaljhksjBKAJBS.jpeg
-                        category:
-                          id: 1
-                          name: Kucing
-                      - id: 5
-                        name: Kucing Anggora X Hima
-                        description: warna abu-abu
-                        qty: 3
-                        price: 2000000
-                        img: KHkaljhksjBKAJBS.jpeg
-                        category:
-                          id: 1
-                          name: Kucing
+                      all_adopt:
+                        - id: 1
+                          name: kodomo
+                          img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/42850759048.jpg?alt=media&token=c74e1477-9bba-4205-823e-b90370ec6d97
+                          age: 1
+                          animal_race: reptil
+                          categoryId: 1
+                          createdAt: '2022-02-25T17:03:42.378Z'
+                          updatedAt: '2022-02-25T17:03:42.378Z'
+                          category:
+                            id: 1
+                            name: reptil
+                            createdAt: '2022-02-25T17:03:42.375Z'
+                            updatedAt: '2022-02-25T17:03:42.375Z'
                 CATEGORIES:
-                  description: Get data product by Tags example Anggora
+                  description: Get data product by Tags example mamalia
                   value:
-                    status: OK
+                    message: OK
+                    count: 5
+                    page: 1
+                    limit: 10
+                    endIndex: 0
                     data:
-                      count: 6
-                      adopts:
-                      - id: 1
-                        name: kucing anggora
-                        description: murah bangettt
-                        qty: 5
-                        price: 30000
-                        img: KHkaljhksjBKAJBS.jpeg
-                        category:
-                          id: 1
-                          name: Anggora
-                      - id: 2
-                        name: kucing bulu tebal
-                        description: oren gembul
-                        qty: 3
-                        price: 200000
-                        img: KHkaljhksjBKAJBS.jpeg
-                        category:
-                          id: 1
-                          name: Anggora
-      security: []
-      x-swagger-router-controller: UsersActivity
-  /adopts/{adoptId}:
-    get:
-      tags:
-      - Users Activity
-      summary: Endpoint to get animal adopt by Id
-      description: Used by all users to view details of a Used by all users to view
-        details of an adopted animal
-      operationId: adoptsAdoptIdGET
-      parameters:
-      - name: adoptId
-        in: path
-        description: get adoptId
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: "1"
-      responses:
-        "200":
-          description: Success get product by Id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200_2'
-              example:
-                status: OK
-                data:
-                  id: 1
-                  name: kucing oren
-                  img: kucing.jpeg
-                  age: 20
-                  animal_race: anggora
-                  category:
-                    id: 1
-                    name: Kucing
-        "404":
-          description: page not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/404'
-      security: []
-      x-swagger-router-controller: UsersActivity
+                      id: 4
+                      name: pikachu
+                      img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/488377990.jpg?alt=media&token=dfe3d9b1-9843-4424-872a-a8a79cddd1ac
+                      age: 1
+                      animal_race: rare
+                      categoryId: 2
+                      createdAt: '2022-02-25T17:03:42.378Z'
+                      updatedAt: '2022-02-25T17:03:42.378Z'
+                      category:
+                        id: 2
+                        name: mamalia
+                        createdAt: '2022-02-25T17:03:42.375Z'
+                        updatedAt: '2022-02-25T17:03:42.375Z'
   /categories:
     get:
-      tags:
-      - Users Activity
       summary: Endpoint to view categories
-      description: Used by all users to view details of a Used by all users to view
-        a categories
-      operationId: categoriesGET
+      description: Used by all users to view details of a Used by all users to view a categories
+      tags:
+        - Users Activity
+      security: []
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/categories'
               example:
-                status: OK
+                message: Success
                 data:
-                  count: 6
-                  categories:
                   - id: 1
-                    name: Kucing
+                    name: reptil
+                    createdAt: '2022-02-25T17:03:42.375Z'
+                    updatedAt: '2022-02-25T17:03:42.375Z'
                   - id: 2
-                    name: Kadal
+                    name: mamalia
+                    createdAt: '2022-02-25T17:03:42.375Z'
+                    updatedAt: '2022-02-25T17:03:42.375Z'
                   - id: 3
-                    name: Buaya
-      security: []
-      x-swagger-router-controller: UsersActivity
+                    name: purba
+                    createdAt: '2022-02-25T17:03:42.375Z'
+                    updatedAt: '2022-02-25T17:03:42.375Z'
+                  - id: 4
+                    name: eksotis
+                    createdAt: '2022-02-25T17:03:42.375Z'
+                    updatedAt: '2022-02-25T17:03:42.375Z'
+  /admin/v1/order:
+    get:
+      summary: Endpoint to get all order
+      description: Used by admin to view orders, and filter by name_user and by status
+      tags:
+        - Admin | Order
+      parameters:
+        - name: name
+          in: query
+          description: name user filters
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+            default: ''
+        - name: status
+          in: query
+          description: status order filters
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+            default: ''
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orders'
+              examples:
+                ORDERS:
+                  description: View all orders
+                  value:
+                    message: Success
+                    data:
+                      - id: 1
+                        user_id: 2bRTUZm4ZfeLWMHXEQ14pvilyT93
+                        address:
+                          id: 2
+                          name: adudu2
+                          phone: '123456'
+                          province: Sulawesi Selatan
+                          city: Enrekang
+                          postal_code: '91719'
+                          address: jl. bersama dia dan dia
+                          province_code: '23'
+                          city_code: '123'
+                        shipping_costs: 45000
+                        grand_total: 789000
+                        grand_weight: 5
+                        resi: ''
+                        status: CONFIRMATION
+                        midtrans_order_id: ''
+                        midtrans_snap_token: ''
+                      - id: 2
+                        user_id: j4r8Y6S53EgsBSNj8tQcPfzON4G2
+                        address:
+                          id: 4
+                          name: upin
+                          phone: '123456'
+                          province: Nanggroe Aceh Darussalam (NAD)
+                          city: Aceh Barat Daya
+                          postal_code: '23764'
+                          address: jl. bersama ipin
+                          province_code: '21'
+                          city_code: '2'
+                        shipping_costs: 50000
+                        grand_total: 70000
+                        grand_weight: 6
+                        resi: ''
+                        status: PROCESS
+                        midtrans_order_id: ''
+                        midtrans_snap_token: ''
+                      - id: 3
+                        user_id: XSgo6cGNR8XhpKDbmmbfi3lYe1e2
+                        address:
+                          id: 2
+                          name: adudu2
+                          phone: '123456'
+                          province: Sulawesi Selatan
+                          city: Enrekang
+                          postal_code: '91719'
+                          address: jl. bersama dia dan dia
+                          province_code: '23'
+                          city_code: '123'
+                        shipping_costs: 25000
+                        grand_total: 1185000
+                        grand_weight: 10
+                        resi: ''
+                        status: PENDING
+                        midtrans_order_id: 20220226qy3b96fZto5dZCw1VMC6Hsnm
+                        midtrans_snap_token: e3e965e1-7caf-468f-ac86-e87a60660a59
+                STATUS_ORDER:
+                  description: Filter by status order example CONFIRMATION
+                  value:
+                    message: Success
+                    data:
+                      - id: 1
+                        user_id: 2bRTUZm4ZfeLWMHXEQ14pvilyT93
+                        address:
+                          id: 2
+                          name: adudu2
+                          phone: '123456'
+                          province: Sulawesi Selatan
+                          city: Enrekang
+                          postal_code: '91719'
+                          address: jl. bersama dia dan dia
+                          province_code: '23'
+                          city_code: '123'
+                        shipping_costs: 45000
+                        grand_total: 789000
+                        grand_weight: 5
+                        resi: ''
+                        status: CONFIRMATION
+                        midtrans_order_id: ''
+                        midtrans_snap_token: ''
+                NAME_ADDRESS:
+                  description: Filter by name address user example upin
+                  value:
+                    message: Success
+                    data:
+                      - id: 2
+                        user_id: j4r8Y6S53EgsBSNj8tQcPfzON4G2
+                        address:
+                          id: 4
+                          name: upin
+                          phone: '123456'
+                          province: Nanggroe Aceh Darussalam (NAD)
+                          city: Aceh Barat Daya
+                          postal_code: '23764'
+                          address: jl. bersama ipin
+                          province_code: '21'
+                          city_code: '2'
+                        shipping_costs: 50000
+                        grand_total: 70000
+                        grand_weight: 6
+                        resi: ''
+                        status: PROCESS
+                        midtrans_order_id: ''
+                        midtrans_snap_token: ''
+        '401':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401'
+        '403':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403'
+        '404':
+          description: page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        '500':
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+  /admin/v1/order/{orderId}:
+    get:
+      summary: Endpoint to view spesific order
+      description: Used by admin to view spesific order by ID
+      parameters:
+        - $ref: '#/components/parameters/orderId'
+      tags:
+        - Admin | Order
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orders'
+              example:
+                message: Success
+                data:
+                  id: 3
+                  user_id: XSgo6cGNR8XhpKDbmmbfi3lYe1e2
+                  address:
+                    id: 2
+                    name: adudu2
+                    phone: '123456'
+                    province: Sulawesi Selatan
+                    city: Enrekang
+                    postal_code: '91719'
+                    address: jl. bersama dia dan dia
+                    province_code: '23'
+                    city_code: '123'
+                  shipping_costs: 25000
+                  grand_total: 1185000
+                  grand_weight: 10
+                  resi: ''
+                  status: PENDING
+                  midtrans_order_id: 20220226qy3b96fZto5dZCw1VMC6Hsnm
+                  midtrans_snap_token: e3e965e1-7caf-468f-ac86-e87a60660a59
+        '401':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401'
+        '403':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403'
+        '404':
+          description: page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        '500':
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+    put:
+      summary: Endpoint to add resi
+      description: Used by admin to update manual resi
+      tags:
+        - Admin | Order
+      parameters:
+        - $ref: '#/components/parameters/orderId'
+      requestBody:
+        description: SUCCESS
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resi:
+                  type: string
+                  example: JDT0128-9010284
+      responses:
+        '201':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resi:
+                    type: string
+              example:
+                message: Created
+                data: receipt has been added
+    delete:
+      summary: Endpoint to delete order by Id
+      description: Used by admin to delete order
+      parameters:
+        - $ref: '#/components/parameters/orderId'
+      tags:
+        - Admin | Order
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/deleted'
+        '401':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401'
+        '403':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403'
+        '404':
+          description: page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        '500':
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+  /admin/v1/histories:
+    get:
+      summary: Endpoint to view histories
+      description: Used by admin to view all histories
+      parameters:
+        - name: date
+          in: query
+          description: name user filters
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+            default: '2022'
+      tags:
+        - Admin | Histories
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product_order_histories'
+              example:
+                message: Success
+                data:
+                  count: 4
+                  productHistory:
+                    - id: 1
+                      order_history_id: 1
+                      product_img: null
+                      product_name: Kandang 2 tingkat
+                      product_price: 10000
+                      product_weight: 1.1
+                      qty: 1
+                      sub_weight: 1.1
+                      sub_total: 10000
+                      createdAt: '2022-02-25T17:03:42.398Z'
+                      updatedAt: '2022-02-25T17:03:42.398Z'
+                    - id: 2
+                      order_history_id: 1
+                      product_img: null
+                      product_name: maxxi
+                      product_price: 10000
+                      product_weight: 1.1
+                      qty: 1
+                      sub_weight: 1.1
+                      sub_total: 10000
+                      createdAt: '2022-02-25T17:03:42.398Z'
+                      updatedAt: '2022-02-25T17:03:42.398Z'
+                    - id: 3
+                      order_history_id: 2
+                      product_img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.29.jpeg?alt=media&token=89bc51e6-12e4-4584-ad94-54d856498a60
+                      product_name: kandang 4 tingkat
+                      product_price: 555000
+                      product_weight: 4
+                      qty: 2
+                      sub_weight: 8
+                      sub_total: 1110000
+                      createdAt: '2022-02-26T01:25:31.520Z'
+                      updatedAt: '2022-02-26T01:25:31.520Z'
+                    - id: 4
+                      order_history_id: 2
+                      product_img: https://firebasestorage.googleapis.com/v0/b/binar-petshop.appspot.com/o/WhatsApp%20Image%202022-01-24%20at%2009.08.28.jpeg?alt=media&token=e2df4196-4bf0-454c-9941-841d765a8947
+                      product_name: vitamin c
+                      product_price: 25000
+                      product_weight: 1
+                      qty: 2
+                      sub_weight: 2
+                      sub_total: 50000
+                      createdAt: '2022-02-26T01:25:31.520Z'
+                      updatedAt: '2022-02-26T01:25:31.520Z'
+        '401':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401'
+        '403':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403'
+        '404':
+          description: page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        '500':
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+  /admin/v1/histories/{historyId}:
+    get:
+      summary: Endpoint to view spesific histories
+      description: Used by admin to view spesific histories orders
+      parameters:
+        - $ref: '#/components/parameters/historyId'
+      tags:
+        - Admin | Histories
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product_order_histories'
+              example:
+                message: Success
+                data:
+                  id: 1
+                  order_history_id:
+                    id: 1
+                    user_name: udin
+                    user_phone: '12345678'
+                    user_province: Sumatera Utara
+                    user_city: Samosir
+                    user_postal_code: '22392'
+                    user_address: jl.samosir no:9
+                    grand_weight: 2.2
+                    grand_total: 20000
+                  product_img: null
+                  product_name: Kandang 2 tingkat
+                  product_price: 10000
+                  product_weight: 1.1
+                  qty: 1
+                  sub_weight: 1.1
+                  sub_total: 10000
+        '401':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401'
+        '403':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403'
+        '404':
+          description: page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        '500':
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+    delete:
+      summary: Endpoint to delete order by Id
+      description: Used by admin to delete order
+      parameters:
+        - $ref: '#/components/parameters/historyId'
+        - name: start_date
+          in: query
+          description: delete by start_date
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: delete by end_date
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+      tags:
+        - Admin | Histories
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/deleted'
+        '401':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401'
+        '403':
+          description: Fail Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403'
+        '404':
+          description: page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        '500':
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
 components:
+  parameters:
+    userId:
+      name: id
+      in: path
+      required: true
+      description: get userId
+      schema:
+        type: string
+        example: '1'
+    addressId:
+      name: addressId
+      in: path
+      required: true
+      description: get addressId
+      schema:
+        type: string
+        example: '1'
+    productId:
+      name: productId
+      in: path
+      required: true
+      description: get productId
+      schema:
+        type: string
+        example: '1'
+    orderId:
+      name: orderId
+      in: path
+      required: true
+      description: get orderId
+      schema:
+        type: string
+        example: '1'
+    suppliesId:
+      name: suppliesId
+      in: path
+      required: true
+      description: get suppliesId
+      schema:
+        type: string
+        example: '1'
+    tagsId:
+      name: tagsId
+      in: path
+      required: true
+      description: get tagsId
+      schema:
+        type: string
+    categoryId:
+      name: categoryId
+      in: path
+      required: true
+      description: get categoryId
+      schema:
+        type: string
+    adoptId:
+      name: adoptId
+      in: path
+      required: true
+      description: get adoptId
+      schema:
+        type: string
+        example: '1'
+    shopping_carts:
+      name: cartId
+      in: path
+      required: true
+      description: get cartId
+      schema:
+        type: string
+        default: '1'
+    historyId:
+      name: historyId
+      in: path
+      required: true
+      description: get historyId
+      schema:
+        type: string
+        example: '1'
+    access_token:
+      name: Authorization
+      in: header
+      description: member access
+      required: true
+      style: simple
+      explode: false
+      schema:
+        required:
+          - Authorization
+        type: string
+        properties:
+          Authorization:
+            type: string
+            example: tokenrahasia
   schemas:
-    "400":
+    '400':
       type: object
       properties:
         status:
           type: string
           example: FAIL
         data:
-          $ref: '#/components/schemas/400_data'
-    "401":
+          type: object
+          properties:
+            message:
+              type: string
+              example: BAD_REQUEST!
+    '401':
       type: object
       properties:
         status:
           type: string
           example: FAIL
         data:
-          $ref: '#/components/schemas/401_data'
-    "403":
+          type: object
+          properties:
+            message:
+              type: string
+              example: UNAUTHORIZED!
+    '403':
       type: object
       properties:
         status:
           type: string
           example: FAIL
         data:
-          $ref: '#/components/schemas/403_data'
-    "404":
+          type: object
+          properties:
+            message:
+              type: string
+              example: FORBIDDEN!
+    '404':
       type: object
       properties:
         status:
           type: string
           example: OK
         data:
-          $ref: '#/components/schemas/404_data'
-    "500":
+          type: object
+          properties:
+            message:
+              type: string
+              example: PAGE_NOT_FOUND!
+    '500':
       type: object
       properties:
         status:
           type: string
           example: ERROR
         data:
-          $ref: '#/components/schemas/500_data'
+          type: object
+          properties:
+            message:
+              type: string
+              example: INTERNAL_SERVER_ERROR!
     profiles:
       type: object
       properties:
@@ -3185,17 +3825,6 @@ components:
           type: string
         role_id:
           $ref: '#/components/schemas/roles'
-      example:
-        access_token: access_token
-        refresh_token: refresh_token
-        password: password
-        user_id: user_id
-        phone: phone
-        role_id:
-          name: name
-          id: 6
-        id: 0
-        email: email
     roles:
       type: object
       properties:
@@ -3203,9 +3832,6 @@ components:
           type: integer
         name:
           type: string
-      example:
-        name: name
-        id: 6
     addresses:
       type: object
       properties:
@@ -3229,27 +3855,6 @@ components:
           type: string
         city_code:
           type: string
-      example:
-        address: address
-        province: province
-        user_id:
-          access_token: access_token
-          refresh_token: refresh_token
-          password: password
-          user_id: user_id
-          phone: phone
-          role_id:
-            name: name
-            id: 6
-          id: 0
-          email: email
-        phone: phone
-        city: city
-        name: name
-        city_code: city_code
-        id: 0
-        postal_code: postal_code
-        province_code: province_code
     about:
       type: object
       properties:
@@ -3269,15 +3874,6 @@ components:
           type: string
         city_code:
           type: string
-      example:
-        province: province
-        city: city
-        name: name
-        description: description
-        city_code: city_code
-        id: 0
-        postal_code: postal_code
-        province_code: province_code
     products:
       type: object
       properties:
@@ -3297,15 +3893,6 @@ components:
           type: integer
         img:
           type: string
-      example:
-        sold: 5
-        img: img
-        price: price
-        qty: 1
-        name: name
-        description: description
-        weight: weight
-        id: 6
     supplies:
       type: object
       properties:
@@ -3317,19 +3904,6 @@ components:
           type: integer
         date:
           type: string
-      example:
-        date: date
-        product_id:
-          sold: 5
-          img: img
-          price: price
-          qty: 1
-          name: name
-          description: description
-          weight: weight
-          id: 6
-        qty: 6
-        id: 0
     orders:
       type: object
       properties:
@@ -3345,6 +3919,8 @@ components:
           type: string
         shipping_cost:
           type: string
+        resi:
+          type: string
         grand_weight:
           type: string
         grand_total:
@@ -3353,51 +3929,21 @@ components:
           type: string
         status:
           type: string
-      example:
-        snap_token: snap_token
-        date: date
-        user_id:
-          access_token: access_token
-          refresh_token: refresh_token
-          password: password
-          user_id: user_id
-          phone: phone
-          role_id:
-            name: name
-            id: 6
-          id: 0
-          email: email
-        shipping_cost: shipping_cost
-        address_id:
-          address: address
-          province: province
-          user_id:
-            access_token: access_token
-            refresh_token: refresh_token
-            password: password
-            user_id: user_id
-            phone: phone
-            role_id:
-              name: name
-              id: 6
-            id: 0
-            email: email
-          phone: phone
-          city: city
-          name: name
-          city_code: city_code
-          id: 0
-          postal_code: postal_code
-          province_code: province_code
-        grand_weight: grand_weight
-        midtrans_id: midtrans_id
-        id: 0
-        grand_total: grand_total
-        status: status
     order_products:
       type: array
       items:
-        $ref: '#/components/schemas/order_products_inner'
+        type: object
+        properties:
+          product_id:
+            $ref: '#/components/schemas/products'
+          order_id:
+            $ref: '#/components/schemas/orders'
+          qty:
+            type: integer
+          sub_weight:
+            type: integer
+          sub_total:
+            type: string
     tags:
       type: object
       properties:
@@ -3405,9 +3951,6 @@ components:
           type: integer
         name:
           type: string
-      example:
-        name: name
-        id: 6
     product_tags:
       type: object
       properties:
@@ -3417,20 +3960,6 @@ components:
           $ref: '#/components/schemas/products'
         tag_id:
           $ref: '#/components/schemas/tags'
-      example:
-        product_id:
-          sold: 5
-          img: img
-          price: price
-          qty: 1
-          name: name
-          description: description
-          weight: weight
-          id: 6
-        tag_id:
-          name: name
-          id: 6
-        id: 0
     animal_adoptions:
       type: object
       properties:
@@ -3446,15 +3975,6 @@ components:
           type: string
         categoryId:
           $ref: '#/components/schemas/categories'
-      example:
-        img: img
-        name: name
-        id: 0
-        animal_race: animal_race
-        age: 6
-        categoryId:
-          name: name
-          id: 1
     categories:
       type: object
       properties:
@@ -3462,9 +3982,6 @@ components:
           type: integer
         name:
           type: string
-      example:
-        name: name
-        id: 1
     shopping_carts:
       type: object
       properties:
@@ -3474,28 +3991,48 @@ components:
           $ref: '#/components/schemas/profiles'
         product_id:
           $ref: '#/components/schemas/products'
-      example:
-        user_id:
-          access_token: access_token
-          refresh_token: refresh_token
-          password: password
-          user_id: user_id
-          phone: phone
-          role_id:
-            name: name
-            id: 6
-          id: 0
-          email: email
-        product_id:
-          sold: 5
-          img: img
-          price: price
-          qty: 1
-          name: name
-          description: description
-          weight: weight
-          id: 6
-        id: 0
+    order_histories:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_name:
+          type: string
+        user_phone:
+          type: string
+        user_province:
+          type: string
+        user_city:
+          type: string
+        user_postal_code:
+          type: string
+        user_address:
+          type: string
+        grand_weight:
+          type: integer
+        grand_total:
+          type: integer
+    product_order_histories:
+      type: object
+      properties:
+        id:
+          type: integer
+        order_history_id:
+          $ref: '#/components/schemas/order_histories'
+        product_img:
+          type: string
+        product_name:
+          type: string
+        product_price:
+          type: string
+        product_weight:
+          type: string
+        qty:
+          type: integer
+        sub_weight:
+          type: integer
+        sub_total:
+          type: integer
     deleted:
       type: object
       properties:
@@ -3503,256 +4040,11 @@ components:
           type: string
           example: OK
         data:
-          $ref: '#/components/schemas/deleted_data'
-      example:
-        data:
-          message: SUCCESS_DELETED!
-        status: OK
-    inline_response_200:
-      type: object
-      properties:
-        status:
-          type: string
-        data:
-          $ref: '#/components/schemas/inline_response_200_data'
-      example:
-        data:
-          message: message
-        status: status
-    inline_response_200_1:
-      type: object
-      properties:
-        status:
-          type: string
-        data:
           type: object
-      example:
-        data: {}
-        status: status
-    inline_response_200_2:
-      type: object
-      properties:
-        status:
-          type: string
-        data:
-          $ref: '#/components/schemas/animal_adoptions'
-      example:
-        data:
-          img: img
-          name: name
-          id: 0
-          animal_race: animal_race
-          age: 6
-          categoryId:
-            name: name
-            id: 1
-        status: status
-    "400_data":
-      type: object
-      properties:
-        message:
-          type: string
-          example: BAD_REQUEST!
-    "401_data":
-      type: object
-      properties:
-        message:
-          type: string
-          example: UNAUTHORIZED!
-    "403_data":
-      type: object
-      properties:
-        message:
-          type: string
-          example: FORBIDDEN!
-    "404_data":
-      type: object
-      properties:
-        message:
-          type: string
-          example: PAGE_NOT_FOUND!
-    "500_data":
-      type: object
-      properties:
-        message:
-          type: string
-          example: INTERNAL_SERVER_ERROR!
-    order_products_inner:
-      type: object
-      properties:
-        product_id:
-          $ref: '#/components/schemas/products'
-        order_id:
-          $ref: '#/components/schemas/orders'
-        qty:
-          type: integer
-        sub_weight:
-          type: integer
-        sub_total:
-          type: string
-      example:
-        product_id:
-          sold: 5
-          img: img
-          price: price
-          qty: 1
-          name: name
-          description: description
-          weight: weight
-          id: 6
-        qty: 6
-        sub_total: sub_total
-        order_id:
-          snap_token: snap_token
-          date: date
-          user_id:
-            access_token: access_token
-            refresh_token: refresh_token
-            password: password
-            user_id: user_id
-            phone: phone
-            role_id:
-              name: name
-              id: 6
-            id: 0
-            email: email
-          shipping_cost: shipping_cost
-          address_id:
-            address: address
-            province: province
-            user_id:
-              access_token: access_token
-              refresh_token: refresh_token
-              password: password
-              user_id: user_id
-              phone: phone
-              role_id:
-                name: name
-                id: 6
-              id: 0
-              email: email
-            phone: phone
-            city: city
-            name: name
-            city_code: city_code
-            id: 0
-            postal_code: postal_code
-            province_code: province_code
-          grand_weight: grand_weight
-          midtrans_id: midtrans_id
-          id: 0
-          grand_total: grand_total
-          status: status
-        sub_weight: 1
-    deleted_data:
-      type: object
-      properties:
-        message:
-          type: string
-          example: SUCCESS_DELETED!
-      example:
-        message: SUCCESS_DELETED!
-    inline_response_200_data:
-      type: object
-      properties:
-        message:
-          type: string
-      example:
-        message: message
-  parameters:
-    userId:
-      name: id
-      in: path
-      description: get userId
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: string
-        example: "1"
-    addressId:
-      name: addressId
-      in: path
-      description: get addressId
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: string
-        example: "1"
-    productId:
-      name: productId
-      in: path
-      description: get productId
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: string
-        example: "1"
-    suppliesId:
-      name: suppliesId
-      in: path
-      description: get suppliesId
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: string
-        example: "1"
-    tagsId:
-      name: tagsId
-      in: path
-      description: get tagsId
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: string
-    categoryId:
-      name: categoryId
-      in: path
-      description: get categoryId
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: string
-    adoptId:
-      name: adoptId
-      in: path
-      description: get adoptId
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: string
-        example: "1"
-    shopping_carts:
-      name: cartId
-      in: path
-      description: get cartId
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: string
-        default: "1"
-    access_token:
-      name: Authorization
-      in: header
-      description: member access
-      required: true
-      style: simple
-      explode: false
-      schema:
-        required:
-        - Authorization
-        type: string
-        properties:
-          Authorization:
-            type: string
-            example: tokenrahasia
+          properties:
+            message:
+              type: string
+              example: SUCCESS_DELETED!
   securitySchemes:
     BearerToken:
       type: http
